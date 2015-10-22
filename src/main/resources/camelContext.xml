@@ -10,7 +10,7 @@
     	<property name="searchSystemEnvironment" value="true" />
   </bean> 
   
-  <bean id="mongoDb" class="com.mongodb.Mongo">
+  <bean id="cloudDb" class="com.mongodb.Mongo">
   	<constructor-arg name="host" value="127.7.189.130" /> <!-- value="${env.OPENSHIFT_MONGODB_DB_HOST}" / -->
     <constructor-arg name="port" value="27017" /> <!-- "${env.OPENSHIFT_MONGODB_DB_PORT}" / -->
   </bean>
@@ -34,6 +34,7 @@
     <route customId="true" id="Put to cache">
     	<from uri="direct:putToCache"/>
     	<log message="Put to cache: ${header.id} -> ${body}" loggingLevel="INFO"/>
+    	<to uri="mongodb:cloudDb?database=cache&amp;collection=testing&amp;operation=save"/>
     </route>
     
     <route customId="true" id="Get from cache">
@@ -43,7 +44,7 @@
     
     <route customId="true" id="Delete from cache">
     	<from uri="direct:deleteFromCache"/>
-    	<log message="Delete from cache: ${header.id} -> ${body}" loggingLevel="INFO"/>
+    	<log message="Delete from cache: ${header.id}" loggingLevel="INFO"/>
     </route>
   </camelContext>
 
