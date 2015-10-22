@@ -51,7 +51,22 @@
 			<artifactId>camel-mongodb</artifactId>
             <version>2.15.1</version>
 		</dependency>
-        <!-- spring web -->
+        <!-- spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>3.2.12.RELEASE</version>
+		</dependency>
+  		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>3.2.12.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>3.2.12.RELEASE</version>
+		</dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
