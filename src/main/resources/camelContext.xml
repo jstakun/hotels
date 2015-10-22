@@ -38,7 +38,7 @@
     <route customId="true" id="Put to cache">
     	<from uri="direct:putToCache"/>
     	<log message="Put to cache: ${header.id} -> ${body}" loggingLevel="INFO"/>
-    	<to uri="mongodb:cloudDb?database=cache&amp;collection=testing&amp;operation=save"/>
+    	<to uri="mongodb:cloudDb?database=cache&amp;operation=save"/>
     </route>
     
     <route customId="true" id="Get from cache">
