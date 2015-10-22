@@ -11,8 +11,8 @@
   </bean> 
   
   <bean id="mongoDb" class="com.mongodb.Mongo">
-  	<constructor-arg name="host" value="${OPENSHIFT_MONGODB_DB_HOST}" />
-    <constructor-arg name="port" value="${OPENSHIFT_MONGODB_DB_PORT}" />
+  	<constructor-arg name="host" value="${env.OPENSHIFT_MONGODB_DB_HOST}" />
+    <constructor-arg name="port" value="${env.OPENSHIFT_MONGODB_DB_PORT}" />
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring" trace="false">
