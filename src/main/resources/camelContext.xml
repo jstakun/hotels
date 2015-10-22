@@ -11,8 +11,11 @@
   </bean> 
   
   <bean id="cloudDb" class="com.mongodb.Mongo">
-  	<constructor-arg name="host" value="127.7.189.130" /> <!-- value="${env.OPENSHIFT_MONGODB_DB_HOST}" / -->
-    <constructor-arg name="port" value="27017" /> <!-- "${env.OPENSHIFT_MONGODB_DB_PORT}" / -->
+     <constructor-arg index="0"> 
+        <bean class="com.mongodb.MongoURI"> 
+            <constructor-arg index="0" value="mongodb://${OPENSHIFT_MONGODB_DB_USERNAME}:${OPENSHIFT_MONGODB_DB_PASSWORD}@${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/cache" /> 
+        </bean> 
+    </constructor-arg>
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring" trace="false">
