@@ -14,7 +14,7 @@
      <constructor-arg index="0"> 
         <bean class="com.mongodb.MongoURI"> 
             <!-- constructor-arg index="0" value="mongodb://${OPENSHIFT_MONGODB_DB_USERNAME}:${OPENSHIFT_MONGODB_DB_PASSWORD}@${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/cache" /-->
-            <constructor-arg index="0" value="mongodb://admin:t2GJt9CnkSyl@127.7.189.130:27017/" />  
+            <constructor-arg index="0" value="mongodb://admin:t2GJt9CnkSyl@127.7.189.130:27017/cache" />  
         </bean> 
     </constructor-arg>
   </bean>
@@ -38,7 +38,7 @@
     <route customId="true" id="Put to cache">
     	<from uri="direct:putToCache"/>
     	<log message="Put to cache: ${header.id} -> ${body}" loggingLevel="INFO"/>
-    	<to uri="mongodb:cloudDb?database=cache&amp;collection=testing&amp;operation=save"/>
+    	<to uri="mongodb:cloudDb?database=cache&amp;collection=testing&amp;operation=insert"/>
     </route>
     
     <route customId="true" id="Get from cache">
