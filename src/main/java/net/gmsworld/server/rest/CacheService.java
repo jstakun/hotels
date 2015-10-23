@@ -86,7 +86,11 @@ public class CacheService {
 		DBCollection testing = this.getCollection(latitude + "_" + longitude);
 		DBObject dbo = (DBObject)JSON.parse(document);
 		WriteResult wr = testing.insert(dbo);
-		return Response.status(200).entity("Document status: " + wr.getError()).build();
+		if (wr.getError() != null) {
+			return Response.status(500).entity("Failed to save document " + wr.getError()).build();
+		} else {
+			return Response.status(200).entity("Document saved").build();
+		}
 	}
 
 }
