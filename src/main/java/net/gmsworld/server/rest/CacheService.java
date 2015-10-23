@@ -13,6 +13,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.geojson.FeatureCollection;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -61,8 +63,8 @@ public class CacheService {
 	@GET
 	@Produces("application/json")
 	@Path("/geojson/{layer}/{lat}/{lng}")
-	public String getLayer(@PathParam("layer") String layer, @PathParam("lat") String latitude, @PathParam("lng") String longitude) {
-		String response = null;
+	public FeatureCollection getLayer(@PathParam("layer") String layer, @PathParam("lat") String latitude, @PathParam("lng") String longitude) {
+		FeatureCollection response = null;
 		DBCollection collection = this.getCollection(latitude + "_" + longitude);
 		BasicDBObject query = new BasicDBObject();
 		BasicDBObject fields = new BasicDBObject();
@@ -71,13 +73,12 @@ public class CacheService {
 		cursor.sort(new BasicDBObject("_id", -1)).limit(1);
 		try {
 			if (cursor.hasNext()) {
-				response = cursor.next().toString();
+				response = (FeatureCollection)cursor.next();
 			}
 		} finally {
 			cursor.close();
 		}
 		return response;
-
 	}
 	
 	@POST()
