@@ -28,7 +28,7 @@ import net.gmsworld.server.mongo.DBConnection;
 public class CacheService {
 	
 	//TODO create collection by lat,lng
-	//TODO find by layer //{"type":"FeatureCollection","properties":{"layer":"Layer"},"features":[]});
+	//TODO find by layer //{"type":"FeatureCollection","properties":{"layer":"Testing"},"features":[]});
 
 	@Inject
 	private DBConnection dbConnection;
@@ -65,10 +65,8 @@ public class CacheService {
 		String response = null;
 		DBCollection collection = this.getCollection(latitude + "_" + longitude);
 		BasicDBObject allQuery = new BasicDBObject();
-		BasicDBObject props = new BasicDBObject();
-		props.put("layer", layer);
 		BasicDBObject fields = new BasicDBObject();
-		fields.put("properties", props);
+		fields.put("properties.layer", layer);
 		DBCursor cursor = collection.find(allQuery, fields);
 		try {
 			if (cursor.hasNext()) {
