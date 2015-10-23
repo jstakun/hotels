@@ -68,7 +68,7 @@ public class CacheService {
 		BasicDBObject fields = new BasicDBObject();
 		query.put("properties.layer", layer);
 		DBCursor cursor = collection.find(query, fields);
-		cursor.sort(new BasicDBObject("_id ", 1));
+		cursor.sort(new BasicDBObject("_id ", -1));
 		try {
 			if (cursor.hasNext()) {
 				response = cursor.next().toString();
