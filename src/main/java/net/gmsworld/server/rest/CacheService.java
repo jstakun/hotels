@@ -12,13 +12,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.json.JSONObject;
-
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
+import com.mongodb.util.JSON;
 
 import net.gmsworld.server.mongo.DBConnection;
 
@@ -55,9 +54,9 @@ public class CacheService {
 	
 	@POST()
 	@Consumes("application/json")
-	public Response insertToCache(JSONObject document) {
+	public Response insertToCache(String document) {
 		DBCollection testing = this.getTestingCollection();
-		DBObject dbo = (DBObject) document;
+		DBObject dbo = (DBObject)JSON.parse(document);
 		WriteResult wr = testing.insert(dbo);
 		
 		return Response.status(200).entity("Document status: " + wr.toString()).build();
