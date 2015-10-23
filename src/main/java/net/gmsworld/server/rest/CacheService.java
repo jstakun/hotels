@@ -64,10 +64,10 @@ public class CacheService {
 	public String getLayer(@PathParam("layer") String layer, @PathParam("lat") String latitude, @PathParam("lng") String longitude) {
 		String response = null;
 		DBCollection collection = this.getCollection(latitude + "_" + longitude);
-		BasicDBObject allQuery = new BasicDBObject();
+		BasicDBObject query = new BasicDBObject();
 		BasicDBObject fields = new BasicDBObject();
-		fields.put("properties.layer", layer);
-		DBCursor cursor = collection.find(allQuery, fields);
+		query.put("properties.layer", layer);
+		DBCursor cursor = collection.find(query, fields);
 		try {
 			if (cursor.hasNext()) {
 				response = cursor.next().toString();
