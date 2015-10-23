@@ -14,7 +14,7 @@
      <constructor-arg index="0"> 
         <bean class="com.mongodb.MongoURI"> 
             <!-- constructor-arg index="0" value="mongodb://${OPENSHIFT_MONGODB_DB_USERNAME}:${OPENSHIFT_MONGODB_DB_PASSWORD}@${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/cache" /-->
-            <constructor-arg index="0" value="mongodb://admin:t2GJt9CnkSyl@127.7.189.130:27017/cache" />  
+            <constructor-arg index="0" value="mongodb://jstakun:manager1@127.7.189.130:27017/cache" />  
         </bean> 
     </constructor-arg>
   </bean>
