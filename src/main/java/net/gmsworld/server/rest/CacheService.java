@@ -9,9 +9,11 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -24,23 +26,27 @@ import net.gmsworld.server.mongo.DBConnection;
 @RequestScoped
 @Path("/cache")
 public class CacheService {
+	
+	//TODO create collection by lat,lng
+	//TODO find by layer //{"type":"FeatureCollection","properties":{"layer":"Layer"},"features":[]});
 
 	@Inject
 	private DBConnection dbConnection;
 	
-	private DBCollection getTestingCollection() {
+	private DBCollection getCollection(String name) {
 		DB db = dbConnection.getDB();
-		DBCollection itemsListCollection = db.getCollection("testing");
+		DBCollection itemsListCollection = db.getCollection(name);
 		return itemsListCollection;
 	}
 	
-	@GET()
+	@GET
 	@Produces("application/json")
-	public List<String> getAllItems() {
+	@Path("/geojson/{lat}/{lng}")
+	public List<String> getAllItems(@PathParam("lat") String latitude, @PathParam("lng") String longitude) {
 		List<String> allItemsList = new ArrayList<String>();
 
-		DBCollection testing = this.getTestingCollection();
-		DBCursor cursor = testing.find();
+		DBCollection collection = this.getCollection(latitude + "_" + longitude);
+		DBCursor cursor = collection.find();
 		try {
 			while (cursor.hasNext()) {
 				allItemsList.add(cursor.next().toString());
@@ -52,14 +58,37 @@ public class CacheService {
 		return allItemsList;
 	}
 	
+	@GET
+	@Produces("application/json")
+	@Path("/geojson/{layer}/{lat}/{lng}")
+	public String getLayer(@PathParam("layer") String layer, @PathParam("lat") String latitude, @PathParam("lng") String longitude) {
+		String response = null;
+		DBCollection collection = this.getCollection(latitude + "_" + longitude);
+		BasicDBObject allQuery = new BasicDBObject();
+		BasicDBObject props = new BasicDBObject();
+		props.put("layer", layer);
+		BasicDBObject fields = new BasicDBObject();
+		fields.put("properties", props);
+		DBCursor cursor = collection.find(allQuery, fields);
+		try {
+			if (cursor.hasNext()) {
+				response = cursor.next().toString();
+			}
+		} finally {
+			cursor.close();
+		}
+		return response;
+
+	}
+	
 	@POST()
 	@Consumes("application/json")
-	public Response insertToCache(String document) {
-		DBCollection testing = this.getTestingCollection();
+	@Path("/geojson/{lat}/{lng}")
+	public Response insertToCache(@PathParam("lat") String latitude, @PathParam("lng") String longitude, String document) {
+		DBCollection testing = this.getCollection(latitude + "_" + longitude);
 		DBObject dbo = (DBObject)JSON.parse(document);
 		WriteResult wr = testing.insert(dbo);
-		
-		return Response.status(200).entity("Document status: " + wr.toString()).build();
+		return Response.status(200).entity("Document status: " + wr.getError()).build();
 	}
 
 }
