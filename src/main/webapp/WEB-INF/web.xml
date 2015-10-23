@@ -11,7 +11,6 @@
     <param-value>classpath:camelContext.xml</param-value>
   </context-param>
 
-  <!-- the listener that kick-starts Spring -->
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
