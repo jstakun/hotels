@@ -1,6 +1,6 @@
 package net.gmsworld.server.mongo;
 
-import java.net.UnknownHostException;
+import java.util.logging.Level;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -8,11 +8,14 @@ import javax.inject.Named;
 
 import com.mongodb.DB;
 import com.mongodb.Mongo;
+import com.sun.istack.logging.Logger;
 
 @Named
 @ApplicationScoped
 public class DBConnection {
-
+	
+	private static final Logger logger = Logger.getLogger(DBConnection.class);
+	
 	private DB mongoDB;
 
 	public DBConnection() {
@@ -38,9 +41,9 @@ public class DBConnection {
 		Mongo mongo = null;
 		try {
 			mongo = new Mongo(mongoHost, port);
-			System.out.println("Connected to database");
-		} catch (UnknownHostException e) {
-			System.out.println("Couldn't connect to MongoDB: " + e.getMessage() + " :: " + e.getClass());
+			logger.log(Level.INFO, "Connected to database");
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Couldn't connect to MongoDB: " + e.getMessage(), e);
 		}
 
 		mongoDB = mongo.getDB(mongoDBName);
@@ -58,6 +61,6 @@ public class DBConnection {
 	}
 	
 	private void initDatabase(DB mongoDB) {
-		
+		logger.log(Level.INFO, "Initializing mongo database...");
 	}
 }
