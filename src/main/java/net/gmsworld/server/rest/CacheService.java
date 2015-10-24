@@ -45,7 +45,7 @@ public class CacheService {
 	public List<String> getAllItems(@PathParam("lat") String latitude, @PathParam("lng") String longitude) {
 		List<String> allItemsList = new ArrayList<String>();
 
-		DBCollection collection = this.getCollection("geojson_" + latitude + "_" + longitude);
+		DBCollection collection = this.getCollection(getCollectionId(latitude, longitude));
 		DBCursor cursor = collection.find();
 		try {
 			while (cursor.hasNext()) {
@@ -63,7 +63,7 @@ public class CacheService {
 	@Path("/geojson/{layer}/{lat}/{lng}")
 	public String getLayer(@PathParam("layer") String layer, @PathParam("lat") String latitude, @PathParam("lng") String longitude) {
 		String response = null;
-		DBCollection collection = this.getCollection("geojson_" + latitude + "_" + longitude);
+		DBCollection collection = this.getCollection(getCollectionId(latitude, longitude));
 		BasicDBObject query = new BasicDBObject();
 		BasicDBObject fields = new BasicDBObject();
 		query.put("properties.layer", layer);
@@ -83,7 +83,7 @@ public class CacheService {
 	@Consumes("application/json")
 	@Path("/geojson/{lat}/{lng}")
 	public Response insertToCache(@PathParam("lat") String latitude, @PathParam("lng") String longitude, String document) {
-		DBCollection testing = this.getCollection("geojson_" + latitude + "_" + longitude);
+		DBCollection testing = this.getCollection(getCollectionId(latitude, longitude));
 		DBObject dbo = (DBObject)JSON.parse(document);
 		WriteResult wr = testing.insert(dbo);
 		if (wr.getError() != null) {
@@ -91,6 +91,10 @@ public class CacheService {
 		} else {
 			return Response.status(200).entity("Document saved").build();
 		}  
+	}
+	
+	private static String getCollectionId(String latitude, String longitude) {
+		return "geojson_" + latitude.replace('.', '_') + "_" + longitude.replace('.', '_');
 	}
 
 }
