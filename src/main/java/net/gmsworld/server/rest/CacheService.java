@@ -2,6 +2,7 @@ package net.gmsworld.server.rest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -20,6 +21,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import com.mongodb.util.JSON;
+import com.sun.istack.logging.Logger;
 
 import net.gmsworld.server.mongo.DBConnection;
 
@@ -30,6 +32,8 @@ public class CacheService {
 	//TODO create collection by lat,lng
 	//TODO find by layer //{"type":"FeatureCollection","properties":{"layer":"Testing"},"features":[]});
 
+	private static final Logger logger = Logger.getLogger(CacheService.class);
+	
 	@Inject
 	private DBConnection dbConnection;
 	
@@ -63,7 +67,9 @@ public class CacheService {
 	@Path("/geojson/{layer}/{lat}/{lng}")
 	public String getLayer(@PathParam("layer") String layer, @PathParam("lat") String latitude, @PathParam("lng") String longitude) {
 		String response = null;
-		DBCollection collection = this.getCollection(getCollectionId(latitude, longitude));
+		String collectionId = getCollectionId(latitude, longitude);
+		DBCollection collection = this.getCollection(collectionId);
+		logger.log(Level.INFO, "Searching for " + collectionId);
 		BasicDBObject query = new BasicDBObject();
 		BasicDBObject fields = new BasicDBObject();
 		query.put("properties.layer", layer);
@@ -71,7 +77,10 @@ public class CacheService {
 		cursor.sort(new BasicDBObject("_id", -1)).limit(1);
 		try {
 			if (cursor.hasNext()) {
+				logger.log(Level.INFO, "Document found");
 				response = cursor.next().toString();
+			} else {
+				logger.log(Level.WARNING, "Document not found");
 			}
 		} finally {
 			cursor.close();
@@ -83,12 +92,16 @@ public class CacheService {
 	@Consumes("application/json")
 	@Path("/geojson/{lat}/{lng}")
 	public Response insertToCache(@PathParam("lat") String latitude, @PathParam("lng") String longitude, String document) {
-		DBCollection testing = this.getCollection(getCollectionId(latitude, longitude));
+		String collectionId = getCollectionId(latitude, longitude);
+		DBCollection collection = this.getCollection(collectionId);
+		logger.log(Level.INFO, "Saving document to colletion " + collectionId);
 		DBObject dbo = (DBObject)JSON.parse(document);
-		WriteResult wr = testing.insert(dbo);
+		WriteResult wr = collection.insert(dbo);
 		if (wr.getError() != null) {
+			logger.log(Level.SEVERE, "Failed to save document " + wr.getError());
 			return Response.status(500).entity("Failed to save document " + wr.getError()).build();
 		} else {
+			logger.log(Level.INFO, "Document saved");
 			return Response.status(200).entity("Document saved").build();
 		}  
 	}
