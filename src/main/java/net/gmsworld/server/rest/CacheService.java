@@ -120,6 +120,7 @@ public class CacheService {
 		DBCollection collection = this.getCollection(collectionId);
 		logger.log(Level.INFO, "Saving document to colletion " + collectionId);
 		DBObject dbo = (DBObject)JSON.parse(document);
+		dbo.put("creationDate", new Date());
 		WriteResult wr = collection.insert(dbo);
 		if (wr.getError() != null) {
 			logger.log(Level.SEVERE, "Failed to save document " + wr.getError());
