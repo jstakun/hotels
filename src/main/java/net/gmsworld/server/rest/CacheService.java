@@ -1,6 +1,7 @@
 package net.gmsworld.server.rest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -29,10 +30,8 @@ import net.gmsworld.server.mongo.DBConnection;
 @Path("/cache")
 public class CacheService {
 	
-	//TODO create collection by lat,lng
-	//TODO find by layer //{"type":"FeatureCollection","properties":{"layer":"Testing"},"features":[]});
-
-	private static final Logger logger = Logger.getLogger(CacheService.class);
+	private static final String SECOND_LEVEL_CACHE = "second_level_cache";
+    private static final Logger logger = Logger.getLogger(CacheService.class);
 	
 	@Inject
 	private DBConnection dbConnection;
@@ -88,7 +87,32 @@ public class CacheService {
 		return response;  
 	}
 	
-	@POST()
+	@GET
+	@Produces("application/json")
+	@Path("/{key}")
+	public String getLayer(@PathParam("key") String key) {
+		String response = null;
+		DBCollection collection = getCollection(SECOND_LEVEL_CACHE);
+		logger.log(Level.INFO, "Searching for " + SECOND_LEVEL_CACHE);
+		BasicDBObject query = new BasicDBObject();
+		BasicDBObject fields = new BasicDBObject();
+		query.put("key", key);
+		DBCursor cursor = collection.find(query, fields);
+		cursor.sort(new BasicDBObject("_id", -1)).limit(1);
+		try {
+			if (cursor.hasNext()) {
+				logger.log(Level.INFO, "Document found");
+				response = cursor.next().toString();
+			} else {
+				logger.log(Level.WARNING, "Document not found");
+			}
+		} finally {
+			cursor.close();
+		}
+		return response;  
+	}
+	
+	@POST
 	@Consumes("application/json")
 	@Path("/geojson/{lat}/{lng}")
 	public Response insertToCache(@PathParam("lat") String latitude, @PathParam("lng") String longitude, String document) {
@@ -96,6 +120,25 @@ public class CacheService {
 		DBCollection collection = this.getCollection(collectionId);
 		logger.log(Level.INFO, "Saving document to colletion " + collectionId);
 		DBObject dbo = (DBObject)JSON.parse(document);
+		WriteResult wr = collection.insert(dbo);
+		if (wr.getError() != null) {
+			logger.log(Level.SEVERE, "Failed to save document " + wr.getError());
+			return Response.status(500).entity("Failed to save document " + wr.getError()).build();
+		} else {
+			logger.log(Level.INFO, "Document saved");
+			return Response.status(200).entity("Document saved").build();
+		}  
+	}
+	
+	@POST
+	@Consumes("application/json")
+	@Path("/{key}")
+	public Response insertToCache(@PathParam("key") String key, String document) {
+		DBCollection collection = getCollection(SECOND_LEVEL_CACHE);
+		logger.log(Level.INFO, "Saving document to colletion " + SECOND_LEVEL_CACHE);
+		DBObject dbo = (DBObject)JSON.parse(document);
+		dbo.put("key", key);
+		dbo.put("creationDate", new Date());
 		WriteResult wr = collection.insert(dbo);
 		if (wr.getError() != null) {
 			logger.log(Level.SEVERE, "Failed to save document " + wr.getError());
