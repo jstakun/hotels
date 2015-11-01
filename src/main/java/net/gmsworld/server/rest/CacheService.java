@@ -43,7 +43,7 @@ public class CacheService {
 		if (db.collectionExists(name)) {
 			itemsListCollection = db.getCollection(name);
 	    } else {
-	        DBObject options = BasicDBObjectBuilder.start().add("capped", true).add("max", 50).get();
+	        DBObject options = BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000l).add("max", 50).get();
 	        itemsListCollection = db.createCollection("mycollection", options);
 	    }
 	
