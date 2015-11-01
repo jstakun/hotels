@@ -16,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -38,7 +39,14 @@ public class CacheService {
 	
 	private DBCollection getCollection(String name) {
 		DB db = dbConnection.getDB();
-		DBCollection itemsListCollection = db.getCollection(name);
+		DBCollection itemsListCollection = null;
+		if (db.collectionExists(name)) {
+			itemsListCollection = db.getCollection(name);
+	    } else {
+	        DBObject options = BasicDBObjectBuilder.start().add("capped", true).add("max", 50).get();
+	        itemsListCollection = db.createCollection("mycollection", options);
+	    }
+	
 		return itemsListCollection;
 	}
 	
