@@ -26,6 +26,9 @@
   		<get uri="/v1/cache/{cid}">
     		<to uri="direct:getFromCache"/>
   		</get>
+  		<get uri="/v1/cache/{cid}/{property}/{value}">
+    		<to uri="direct:getByQueryFromCache"/>
+  		</get>
   		<post uri="/v1/cache/{cid}">
     		<to uri="direct:putToCache"/>
   		</post>
@@ -48,8 +51,25 @@
     <route customId="true" id="Get from cache">
     	<from uri="direct:getFromCache"/>
     	<log message="Get all from cache ${header.cid}" loggingLevel="INFO"/>
+    	<setHeader headerName="CamelMongoDbSortBy">
+        	<simple>{"_id" : -1}</simple>
+        </setHeader>
     	<recipientList>
     		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    	</recipientList>
+    </route>
+    
+    <route customId="true" id="Get by query from cache">
+    	<from uri="direct:getByQueryFromCache"/>
+    	<log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value}" loggingLevel="INFO"/>
+    	<setBody>
+          	<simple>{"${header.property}" : "${header.value}"}</simple>
+        </setBody>
+        <setHeader headerName="CamelMongoDbSortBy">
+        	<simple>{"_id" : -1}</simple>
+        </setHeader>
+    	<recipientList>
+    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=findOneByQuery</simple>
     	</recipientList>
     </route>
     
