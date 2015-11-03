@@ -50,7 +50,7 @@ public class CacheService {
 		return itemsListCollection;
 	}
 	
-	// geojson cache endpoints
+	//geojson cache endpoints
 	
 	@GET
 	@Produces("application/json")
