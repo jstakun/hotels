@@ -8,6 +8,8 @@ import javax.inject.Named;
 
 import com.mongodb.DB;
 import com.mongodb.Mongo;
+import com.mongodb.MongoClientURI;
+import com.mongodb.MongoURI;
 import com.sun.istack.logging.Logger;
 
 @Named
@@ -31,16 +33,17 @@ public class DBConnection {
 
 		//Connection URL: mongodb://$OPENSHIFT_MONGODB_DB_HOST:$OPENSHIFT_MONGODB_DB_PORT/
 		
-		String mongoHost = System.getenv("OPENSHIFT_MONGODB_DB_HOST");
-		String mongoPort = System.getenv("OPENSHIFT_MONGODB_DB_PORT");
+		//String mongoHost = System.getenv("OPENSHIFT_MONGODB_DB_HOST");
+		//String mongoPort = System.getenv("OPENSHIFT_MONGODB_DB_PORT");
 		String mongoUser = System.getenv("OPENSHIFT_MONGODB_DB_USERNAME");
 		String mongoPassword = System.getenv("OPENSHIFT_MONGODB_DB_PASSWORD");
 		String mongoDBName = "cache";
-		int port = Integer.decode(mongoPort);
+		String mongoUrl = System.getenv("OPENSHIFT_MONGODB_DB_URL");
+		//int port = Integer.decode(mongoPort);
 		
 		Mongo mongo = null;
 		try {
-			mongo = new Mongo(mongoHost, port);
+			mongo = new Mongo(new MongoURI(mongoUrl)); //new Mongo(mongoHost, port);
 			logger.log(Level.INFO, "Connected to database");
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Couldn't connect to MongoDB: " + e.getMessage(), e);
