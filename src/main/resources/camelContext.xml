@@ -68,8 +68,8 @@
         <setHeader headerName="CamelMongoDbSortBy">
         	<simple>{"_id" : -1}</simple>
         </setHeader>
-    	<recipientList>
-    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=findOneByQuery</simple>
+        <recipientList>
+    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=findAll</simple>
     	</recipientList>
     </route>
     
