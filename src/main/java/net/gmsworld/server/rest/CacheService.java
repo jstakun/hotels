@@ -50,6 +50,8 @@ public class CacheService {
 		return itemsListCollection;
 	}
 	
+	// geojson cache endpoints
+	
 	@GET
 	@Produces("application/json")
 	@Path("/geojson/{lat}/{lng}")
@@ -95,6 +97,27 @@ public class CacheService {
 		return response;  
 	}
 	
+	@POST
+	@Consumes("application/json")
+	@Path("/geojson/{lat}/{lng}")
+	public Response insertToCache(@PathParam("lat") String latitude, @PathParam("lng") String longitude, String document) {
+		String collectionId = getCollectionId(latitude, longitude);
+		DBCollection collection = this.getCollection(collectionId);
+		logger.log(Level.INFO, "Saving document to colletion " + collectionId);
+		DBObject dbo = (DBObject)JSON.parse(document);
+		dbo.put("creationDate", new Date());
+		WriteResult wr = collection.insert(dbo);
+		if (wr.getError() != null) {
+			logger.log(Level.SEVERE, "Failed to save document " + wr.getError());
+			return Response.status(500).entity("Failed to save document " + wr.getError()).build();
+		} else {
+			logger.log(Level.INFO, "Document saved");
+			return Response.status(200).entity("Document saved").build();
+		}  
+	}
+	
+	// second level cache endpoints
+	
 	@GET
 	@Produces("application/json")
 	@Path("/{key}")
@@ -118,25 +141,6 @@ public class CacheService {
 			cursor.close();
 		}
 		return response;  
-	}
-	
-	@POST
-	@Consumes("application/json")
-	@Path("/geojson/{lat}/{lng}")
-	public Response insertToCache(@PathParam("lat") String latitude, @PathParam("lng") String longitude, String document) {
-		String collectionId = getCollectionId(latitude, longitude);
-		DBCollection collection = this.getCollection(collectionId);
-		logger.log(Level.INFO, "Saving document to colletion " + collectionId);
-		DBObject dbo = (DBObject)JSON.parse(document);
-		dbo.put("creationDate", new Date());
-		WriteResult wr = collection.insert(dbo);
-		if (wr.getError() != null) {
-			logger.log(Level.SEVERE, "Failed to save document " + wr.getError());
-			return Response.status(500).entity("Failed to save document " + wr.getError()).build();
-		} else {
-			logger.log(Level.INFO, "Document saved");
-			return Response.status(200).entity("Document saved").build();
-		}  
 	}
 	
 	@POST

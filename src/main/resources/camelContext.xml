@@ -22,13 +22,13 @@
     <restConfiguration bindingMode="auto" component="servlet" contextPath="/camel" />
      
     <rest>
-  		<get uri="/v1/cache/{id}">
+  		<get uri="/v1/cache/{cid}">
     		<to uri="direct:getFromCache"/>
   		</get>
-  		<post uri="/v1/cache/{id}">
+  		<post uri="/v1/cache/{cid}">
     		<to uri="direct:putToCache"/>
   		</post>
-  		<delete uri="/v1/cache/{id}">
+  		<delete uri="/v1/cache/{cid}/{oid}">
     		<to uri="direct:deleteFromCache"/>
   		</delete>
 	</rest>
@@ -36,20 +36,35 @@
     
     <route customId="true" id="Put to cache">
     	<from uri="direct:putToCache"/>
-    	<log message="Put to cache ${header.id} document ${body}" loggingLevel="INFO"/>
+    	<log message="Put to cache ${header.cid} document ${body}" loggingLevel="INFO"/>
     	<recipientList>
-    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.id}&amp;operation=insert</simple>
+    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=insert</simple>
     	</recipientList>
+    	<setBody>
+          	<header>CamelMongoOid</header>
+        </setBody>
     </route>
     
     <route customId="true" id="Get from cache">
     	<from uri="direct:getFromCache"/>
-    	<log message="Get from cache ${header.id}" loggingLevel="INFO"/>
+    	<log message="Get all from cache ${header.cid}" loggingLevel="INFO"/>
+    	<recipientList>
+    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    	</recipientList>
     </route>
     
     <route customId="true" id="Delete from cache">
     	<from uri="direct:deleteFromCache"/>
-    	<log message="Delete from cache ${header.id}" loggingLevel="INFO"/>
+    	<log message="Delete from cache ${header.cid} object ${header.oid}" loggingLevel="INFO"/>
+    	<setBody>
+          	<simple>{"_id" : "${header.oid}"}</simple>
+        </setBody>
+    	<recipientList>
+    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=remove</simple>
+    	</recipientList>
+    	<setBody>
+          	<header>CamelMongoDbRecordsAffected</header>
+        </setBody>
     </route>
   </camelContext>
 
