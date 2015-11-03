@@ -19,6 +19,7 @@
   </bean>
 
   <camelContext id="CacheManager" xmlns="http://camel.apache.org/schema/spring" trace="false">
+    
     <restConfiguration bindingMode="auto" component="servlet" contextPath="/camel" />
      
     <rest>
@@ -28,11 +29,10 @@
   		<post uri="/v1/cache/{cid}">
     		<to uri="direct:putToCache"/>
   		</post>
-  		<delete uri="/v1/cache/{cid}/{oid}">
+  		<delete uri="/v1/cache/{cid}/{property}/{value}">
     		<to uri="direct:deleteFromCache"/>
   		</delete>
 	</rest>
-    
     
     <route customId="true" id="Put to cache">
     	<from uri="direct:putToCache"/>
@@ -55,9 +55,9 @@
     
     <route customId="true" id="Delete from cache">
     	<from uri="direct:deleteFromCache"/>
-    	<log message="Delete from cache ${header.cid} object ${header.oid}" loggingLevel="INFO"/>
+    	<log message="Delete from cache ${header.cid} objects matching ${header.property} : ${header.value}" loggingLevel="INFO"/>
     	<setBody>
-          	<simple>{"_id" : "${header.oid}"}</simple>
+          	<simple>{"${header.property}" : "${header.value}"}</simple>
         </setBody>
     	<recipientList>
     		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=remove</simple>
@@ -66,6 +66,7 @@
           	<header>CamelMongoDbRecordsAffected</header>
         </setBody>
     </route>
+  
   </camelContext>
 
 </beans>
