@@ -38,7 +38,7 @@
     	<from uri="direct:putToCache"/>
     	<log message="Put to cache ${header.id} document ${body}" loggingLevel="INFO"/>
     	<recipientList>
-    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.id}&amp;operation=save</simple>
+    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.id}&amp;operation=insert</simple>
     	</recipientList>
     </route>
     
