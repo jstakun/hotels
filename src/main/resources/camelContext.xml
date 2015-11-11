@@ -64,7 +64,7 @@
     		<to uri="direct:putToCache" />
     	</split>  
     	<setBody>
-          	<header>CamelSplitIndex</header>
+          	<constant>done</constant>
         </setBody>
     </route>	
     
