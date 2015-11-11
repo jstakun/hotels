@@ -1,6 +1,7 @@
 package net.gmsworld.server.camel;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,15 +26,28 @@ public class JsonArraySplitter {
         
         JSONObject root = new JSONObject(msg);         
         //read first value as array
-        String key = (String)root.keys().next();
         
-        logger.log(Level.INFO, "Splitting json array {0}", key);
+        JSONArray jsonArray = null;
+        String key = null;
         
-        JSONArray jsonArray = root.getJSONArray(key);
+        for (Iterator<String> iter = root.keys(); iter.hasNext();) {
+        	key = iter.next();
+        	Object o = root.get(key);
+        	if (o instanceof JSONArray) {
+        		jsonArray = (JSONArray) o;
+        		break;
+        	}
+        }
         
-        for(int i=0; i<jsonArray.length(); i++) {
-            String jsonMsg = jsonArray.get(i).toString();
-            messageList.add(jsonMsg);
+        if (jsonArray != null) {
+        	logger.log(Level.INFO, "Splitting json array {0}", key);
+        
+        	for(int i=0; i<jsonArray.length(); i++) {
+        		String jsonMsg = jsonArray.get(i).toString();
+        		messageList.add(jsonMsg);
+        	}
+        } else {
+        	logger.log(Level.WARNING, "No json array available in the document");
         }
 
         return messageList;
