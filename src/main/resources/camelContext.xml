@@ -17,7 +17,7 @@
         </bean> 
     </constructor-arg>
   </bean>
-
+  
   <camelContext id="CacheManager" xmlns="http://camel.apache.org/schema/spring" trace="false">
     
     <restConfiguration bindingMode="auto" component="servlet" contextPath="/camel" />
@@ -32,6 +32,9 @@
   		<post uri="/v1/cache/{cid}">
     		<to uri="direct:putToCache"/>
   		</post>
+  		<post uri="/v1/cache/multi/{cid}">
+    		<to uri="direct:putToCacheMulti"/>
+  		</post>
   		<delete uri="/v1/cache/{cid}/{property}/{value}">
     		<to uri="direct:deleteFromCache"/>
   		</delete>
@@ -41,12 +44,20 @@
     	<from uri="direct:putToCache"/>
     	<log message="Put to cache ${header.cid} document ${body}" loggingLevel="INFO"/>
     	<recipientList>
-    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=insert</simple>
+    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=save</simple>
     	</recipientList>
     	<setBody>
           	<header>CamelMongoOid</header>
         </setBody>
     </route>
+    
+    <route customId="true" id="Put to cache multiple records">
+    	<from uri="direct:putToCacheMulti"/>
+    	<split streaming="true" parallelProcessing="true">
+    		<method>net.gmsworld.server.camel.JsonArraySplitter</method>
+    		<to uri="direct:putToCache" />
+    	</split>
+    </route>	
     
     <route customId="true" id="Get from cache">
     	<from uri="direct:getFromCache"/>
