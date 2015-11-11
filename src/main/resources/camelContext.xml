@@ -53,7 +53,8 @@
     
     <route customId="true" id="Put to cache multiple records">
     	<from uri="direct:putToCacheMulti"/>
-    	<split parallelProcessing="true">
+    	<log message="Put to cache ${header.cid} multiple documents ${body}" loggingLevel="INFO"/>
+    	<split>
     		<method>net.gmsworld.server.camel.JsonArraySplitter</method>
     		<to uri="direct:putToCache" />
     	</split>
