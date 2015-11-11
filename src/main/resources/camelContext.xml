@@ -53,7 +53,7 @@
     	<setBody>
           	<header>CamelMongoOid</header>
         </setBody>
-    </route>   
+    </route>     
     
     <route customId="true" id="Put to cache multiple records">
     	<from uri="direct:putToCacheMulti"/>
