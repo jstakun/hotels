@@ -30,7 +30,7 @@ public class JsonArraySplitter {
         JSONArray jsonArray = null;
         String key = null;
         
-        for (Iterator<String> iter = root.keys(); iter.hasNext();) {
+        for (Iterator<String> iter = root.keys(); iter.hasNext();) { 
         	key = iter.next();
         	Object o = root.get(key);
         	if (o instanceof JSONArray) {
