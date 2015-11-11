@@ -63,6 +63,9 @@
     		<method>net.gmsworld.server.camel.JsonArraySplitter</method>
     		<to uri="direct:putToCache" />
     	</split>  
+    	<setBody>
+          	<header>CamelSplitIndex</header>
+        </setBody>
     </route>	
     
     <route customId="true" id="Get from cache">
