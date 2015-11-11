@@ -53,7 +53,7 @@
     
     <route customId="true" id="Put to cache multiple records">
     	<from uri="direct:putToCacheMulti"/>
-    	<split streaming="true" parallelProcessing="true">
+    	<split parallelProcessing="true">
     		<method>net.gmsworld.server.camel.JsonArraySplitter</method>
     		<to uri="direct:putToCache" />
     	</split>
