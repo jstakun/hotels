@@ -7,6 +7,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.Message;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 public class JsonArraySplitter {
@@ -18,8 +19,11 @@ public class JsonArraySplitter {
 
         Message message = exchange.getIn();
         String msg = message.getBody(String.class);
+        
+        JSONObject root = (JSONObject) JSONValue.parse(msg);
 
-        JSONArray jsonArray = (JSONArray) JSONValue.parse(msg);
+        //read first value as array
+        JSONArray jsonArray = (JSONArray) root.values().iterator().next();
 
         for(int i=0; i<jsonArray.size(); i++) {
             String jsonMsg = jsonArray.get(i).toString();
