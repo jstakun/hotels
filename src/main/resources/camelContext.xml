@@ -33,6 +33,9 @@
   		<get uri="/v1/cache/{cid}/{property}/{value}">
     		<to uri="direct:getByQueryFromCache"/>
   		</get>
+  		<get uri="/v1/cache/{cid}/nearby/{lat}/{lng}/{distance}/{limit}">
+    		<to uri="direct:getNearbyFromCache"/>
+  		</get>
   		<post uri="/v1/cache/{cid}">
     		<to uri="direct:putToCache"/>
   		</post>
@@ -90,6 +93,23 @@
         </setHeader>
         <setHeader headerName="CamelMongoDbLimit">
         	<constant>1</constant>
+        </setHeader>
+        <recipientList>
+    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    	</recipientList>
+    </route>
+    
+    <route customId="true" id="Get nearby from cache">
+    	<from uri="direct:getNearbyFromCache"/>
+    	<log message="Get from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance}" loggingLevel="INFO"/>
+    	<setBody>
+          	<simple>{ "geometry" : { $near : { $geometry : { type : "Point" , coordinates : [ ${header.lng} , ${header.lat} ] } , $maxDistance : ${header.distance} } } }</simple>
+        </setBody>
+        <setHeader headerName="CamelMongoDbSortBy">
+        	<simple>{"_id" : -1}</simple>
+        </setHeader>
+        <setHeader headerName="CamelMongoDbLimit">
+        	<simple>${header.limit}</simple>
         </setHeader>
         <recipientList>
     		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=findAll</simple>
