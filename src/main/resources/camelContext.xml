@@ -20,6 +20,10 @@
   
   <camelContext id="CacheManager" xmlns="http://camel.apache.org/schema/spring" trace="false">
     
+    <dataFormats>
+        <json id="json" library="Jackson"/>
+    </dataFormats>
+    
     <restConfiguration bindingMode="auto" component="servlet" contextPath="/camel" />
      
     <rest>
@@ -39,7 +43,7 @@
     		<to uri="direct:deleteFromCache"/>
   		</delete>
 	</rest>
-    
+     
     <route customId="true" id="Put to cache">
     	<from uri="direct:putToCache"/>
     	<log message="Put to cache ${header.cid} document ${body}" loggingLevel="INFO"/>
@@ -54,6 +58,7 @@
     <route customId="true" id="Put to cache multiple records">
     	<from uri="direct:putToCacheMulti"/>
     	<log message="Put to cache ${header.cid} multiple documents ${body}" loggingLevel="INFO"/>
+    	<marshal ref="json"/>
     	<split parallelProcessing="true">
     		<method>net.gmsworld.server.camel.JsonArraySplitter</method>
     		<to uri="direct:putToCache" />
