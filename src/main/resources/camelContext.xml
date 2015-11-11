@@ -64,7 +64,7 @@
     		<to uri="direct:putToCache" />
     	</split>  
     	<setBody>
-          	<constant>done</constant>
+          	<simple>{"status" : "ok"}</simple>
         </setBody>
     </route>	
     
