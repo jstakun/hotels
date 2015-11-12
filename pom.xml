@@ -11,7 +11,7 @@
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
-  <!--repositories>
+  <repositories>
 		<repository>
 			<id>eap</id>
 			<url>http://maven.repository.redhat.com/techpreview/all</url>
@@ -34,7 +34,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</pluginRepository>
-  </pluginRepositories-->
+  </pluginRepositories>
   <dependencies>
     <dependency>
       	<groupId>org.jboss.spec</groupId>
