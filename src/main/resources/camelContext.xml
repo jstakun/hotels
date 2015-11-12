@@ -13,7 +13,7 @@
   <bean id="cloudDb" class="com.mongodb.Mongo">
      <constructor-arg index="0"> 
         <bean class="com.mongodb.MongoURI"> 
-            <constructor-arg index="0" value="${OPENSHIFT_MONGODB_DB_URL}cache" />
+            <constructor-arg index="0" value="${OPENSHIFT_MONGODB_DB_URL}${OPENSHIFT_MONGODB_DATABASE}" />
         </bean> 
     </constructor-arg>
   </bean>
@@ -51,7 +51,7 @@
     	<from uri="direct:putToCache"/>
     	<log message="Put to cache ${header.cid} document ${body}" loggingLevel="INFO"/>
     	<recipientList>
-    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=save</simple>
+    		<simple>mongodb:cloudDb?database=${OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=save</simple>
     	</recipientList>
     	<setBody>
           	<header>CamelMongoOid</header>
@@ -78,7 +78,7 @@
         	<simple>{"_id" : -1}</simple>
         </setHeader>
     	<recipientList>
-    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    		<simple>mongodb:cloudDb?database=${OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     	</recipientList>
     </route>
     
@@ -95,7 +95,7 @@
         	<constant>1</constant>
         </setHeader>
         <recipientList>
-    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    		<simple>mongodb:cloudDb?database=${OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     	</recipientList>
     </route>
     
@@ -112,7 +112,7 @@
         	<simple>${header.limit}</simple>
         </setHeader>
         <recipientList>
-    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    		<simple>mongodb:cloudDb?database=${OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     	</recipientList>
     </route>
     
@@ -123,7 +123,7 @@
           	<simple>{"${header.property}" : "${header.value}"}</simple>
         </setBody>
     	<recipientList>
-    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=remove</simple>
+    		<simple>mongodb:cloudDb?database=${OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=remove</simple>
     	</recipientList>
     	<setBody>
           	<header>CamelMongoDbRecordsAffected</header>
