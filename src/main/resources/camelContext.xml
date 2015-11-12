@@ -18,7 +18,7 @@
     </constructor-arg>
   </bean>
   
-  <camelContext id="CacheManager" xmlns="http://camel.apache.org/schema/spring" trace="false">
+  <camelContext id="DBManager" xmlns="http://camel.apache.org/schema/spring" trace="false">
     
     <dataFormats>
         <json id="json" library="Jackson"/>
@@ -51,7 +51,7 @@
     	<from uri="direct:putToCache"/>
     	<log message="Put to cache ${header.cid} document ${body}" loggingLevel="INFO"/>
     	<recipientList>
-    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=save</simple>
+    		<simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=save</simple>
     	</recipientList>
     	<setBody>
           	<header>CamelMongoOid</header>
@@ -78,7 +78,7 @@
         	<simple>{"_id" : -1}</simple>
         </setHeader>
     	<recipientList>
-    		<simple>mongodb:cloudDb?database=cache&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    		<simple>mongodb:cloudDb?database==${sys.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     	</recipientList>
     </route>
     
