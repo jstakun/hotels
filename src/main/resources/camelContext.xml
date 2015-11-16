@@ -21,7 +21,7 @@
   <camelContext id="DBManager" xmlns="http://camel.apache.org/schema/spring" trace="false">
     
     <dataFormats>
-        <json id="json" library="Jackson"/>
+        <json id="json" library="Jackson"/>  
     </dataFormats>
     
     <restConfiguration bindingMode="auto" component="servlet" contextPath="/camel" />
