@@ -42,7 +42,8 @@
   <web-resource-collection>
    <web-resource-name>Camel Rest Endpoints</web-resource-name>
    <url-pattern>/camel/*</url-pattern>
-   <http-method-omission>GET</http-method-omission>
+   <http-method>POST</http-method>
+   <http-method>DELETE</http-method>
   </web-resource-collection>
   <auth-constraint>
    <role-name>admin</role-name>
