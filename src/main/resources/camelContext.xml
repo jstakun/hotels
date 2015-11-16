@@ -77,6 +77,9 @@
     	<setHeader headerName="CamelMongoDbSortBy">
         	<simple>{"_id" : -1}</simple>
         </setHeader>
+        <setHeader headerName="CamelMongoDbLimit">
+        	<constant>100</constant>
+        </setHeader>
     	<recipientList>
     		<simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     	</recipientList>
