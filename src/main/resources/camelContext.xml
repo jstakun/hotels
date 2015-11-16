@@ -49,7 +49,7 @@
      
     <route customId="true" id="Put to cache">
     	<from uri="direct:putToCache"/>
-    	<log message="Put to cache ${header.cid} document ${body}" loggingLevel="INFO"/>
+    	<log message="Putting to cache ${header.cid} one document" loggingLevel="INFO"/>
     	<recipientList>
     		<simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=save</simple>
     	</recipientList>
@@ -60,7 +60,7 @@
     
     <route customId="true" id="Put to cache multiple records">
     	<from uri="direct:putToCacheMulti"/>
-    	<log message="Put to cache ${header.cid} multiple documents ${body}" loggingLevel="INFO"/>
+    	<log message="Putting to cache ${header.cid} multiple documents" loggingLevel="INFO"/>
     	<marshal ref="json"/>
     	<split parallelProcessing="true">
     		<method>net.gmsworld.server.camel.JsonArraySplitter</method>
