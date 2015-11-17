@@ -18,130 +18,127 @@
     </constructor-arg>
   </bean>
   
-  <camelContext id="DBManager" xmlns="http://camel.apache.org/schema/spring" trace="false">
-    
-    <dataFormats>
-        <json id="json" library="Jackson"/>  
-    </dataFormats>
-    
-    <restConfiguration bindingMode="auto" component="servlet" contextPath="/camel" />
-     
-    <rest>
-  		<get uri="/v1/cache/{cid}">
-    		<to uri="direct:getFromCache"/>
-  		</get>
-  		<get uri="/v1/cache/{cid}/{limit}">
-    		<to uri="direct:getFromCache"/>
-  		</get>
-  		<get uri="/v1/cache/{cid}/{property}/{value}">
-  		    <to uri="direct:getByQueryFromCache"/>
-  		</get>
-  		<get uri="/v1/cache/{cid}/{property}/{value}/{limit}">
-  		    <to uri="direct:getByQueryFromCache"/>
-  		</get>
-  		<get uri="/v1/cache/{cid}/nearby/{lat}/{lng}/{distance}/{limit}">
-    		<to uri="direct:getNearbyFromCache"/>
-  		</get>
-  		<post uri="/v1/cache/{cid}">
-    		<to uri="direct:putToCache"/>
-  		</post>
-  		<post uri="/v1/cache/multi/{cid}">
-    		<to uri="direct:putToCacheMulti"/>
-  		</post>
-  		<delete uri="/v1/cache/{cid}/{property}/{value}">
-    		<to uri="direct:deleteFromCache"/>
-  		</delete>
-	</rest>
-     
-    <route customId="true" id="Put to cache">
-    	<from uri="direct:putToCache"/>
-    	<log message="Putting to cache ${header.cid} one document" loggingLevel="INFO"/>
-    	<recipientList>
-    		<simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=save</simple>
-    	</recipientList>
-    	<setBody>
-          	<header>CamelMongoOid</header>
-        </setBody>
-    </route>     
-    
-    <route customId="true" id="Put to cache multiple records">
-    	<from uri="direct:putToCacheMulti"/>
-    	<log message="Putting to cache ${header.cid} multiple documents" loggingLevel="INFO"/>
-    	<marshal ref="json"/>
-    	<split parallelProcessing="true">
-    		<method>net.gmsworld.server.camel.JsonArraySplitter</method>
-    		<to uri="direct:putToCache" />
-    	</split>  
-    	<setBody>
-          	<simple>{"status" : "ok"}</simple>
-        </setBody>
-    </route>	
-    
-    <route customId="true" id="Get from cache">
-    	<from uri="direct:getFromCache"/>
-    	<log message="Get all from cache ${header.cid} with limit ${header.limit}" loggingLevel="INFO"/>
-    	<setHeader headerName="CamelMongoDbSortBy">
-        	<simple>{"_id" : -1}</simple>
-        </setHeader>
-        <setHeader headerName="CamelMongoDbLimit">
-        	<simple>${header.limit}</simple>
-        </setHeader>
-        <setHeader headerName="CamelMongoDbBatchSize">
-        	<constant>100</constant>
-        </setHeader>
-    	<recipientList>
-    		<simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
-    	</recipientList>
-    </route>
-    
-    <route customId="true" id="Get by query from cache">
-    	<from uri="direct:getByQueryFromCache"/>
-    	<log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value} with limit ${header.limit}" loggingLevel="INFO"/>
-    	<setBody>
-          	<simple>{"${header.property}" : "${header.value}"}</simple>
-        </setBody>
-        <setHeader headerName="CamelMongoDbSortBy">
-        	<simple>{"_id" : -1}</simple>
-        </setHeader>
-        <setHeader headerName="CamelMongoDbLimit">
-        	<simple>${header.limit}</simple>
-        </setHeader>
-        <recipientList>
-    		<simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
-    	</recipientList>
-    </route>
-    
-    <route customId="true" id="Get nearby from cache">
-    	<from uri="direct:getNearbyFromCache"/>
-    	<log message="Get from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance} limit ${header.limit}" loggingLevel="INFO"/>
-    	<setBody>
-          	<simple>{ "geometry" : { $near : { $geometry : { type : "Point" , coordinates : [ ${header.lng} , ${header.lat} ] } , $maxDistance : ${header.distance} } } }</simple>
-        </setBody>
-        <setHeader headerName="CamelMongoDbSortBy">
-        	<simple>{"_id" : -1}</simple>
-        </setHeader>
-        <setHeader headerName="CamelMongoDbLimit">
-        	<simple>${header.limit}</simple>
-        </setHeader>
-        <recipientList>
-    		<simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
-    	</recipientList>
-    </route>
-    
-    <route customId="true" id="Delete from cache">
-    	<from uri="direct:deleteFromCache"/>
-    	<log message="Delete from cache ${header.cid} objects matching ${header.property} : ${header.value}" loggingLevel="INFO"/>
-    	<setBody>
-          	<simple>{"${header.property}" : "${header.value}"}</simple>
-        </setBody>
-    	<recipientList>
-    		<simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=remove</simple>
-    	</recipientList>
-    	<setBody>
-          	<header>CamelMongoDbRecordsAffected</header>
-        </setBody>
-    </route>
-  
-  </camelContext>
+  <camelContext trace="false" id="DBManager" xmlns="http://camel.apache.org/schema/spring">
+  <dataFormats>
+    <json library="Jackson" id="json"/>
+  </dataFormats>
+  <restConfiguration component="servlet" contextPath="/camel" bindingMode="auto"/>
+  <rest>
+    <get uri="/v1/cache/{cid}">
+      <to uri="direct:getFromCache"/>
+    </get>
+    <get uri="/v1/cache/{cid}/{limit}">
+      <to uri="direct:getFromCache"/>
+    </get>
+    <get uri="/v1/cache/{cid}/{property}/{value}">
+      <to uri="direct:getByQueryFromCache"/>
+    </get>
+    <get uri="/v1/cache/{cid}/{property}/{value}/{limit}">
+      <to uri="direct:getByQueryFromCache"/>
+    </get>
+    <get uri="/v1/cache/{cid}/nearby/{lat}/{lng}/{distance}/{limit}">
+      <to uri="direct:getNearbyFromCache"/>
+    </get>
+    <post uri="/v1/cache/{cid}">
+      <to uri="direct:putToCache"/>
+    </post>
+    <post uri="/v1/cache/multi/{cid}">
+      <to uri="direct:putToCacheMulti"/>
+    </post>
+    <delete uri="/v1/cache/{cid}/{property}/{value}">
+      <to uri="direct:deleteFromCache"/>
+    </delete>
+  </rest>
+  <route id="Put to cache">
+    <from uri="direct:putToCache"/>
+    <log message="Putting to cache ${header.cid} one document" loggingLevel="INFO"/>
+    <recipientList>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=save</simple>
+    </recipientList>
+    <setBody>
+      <header>CamelMongoOid</header>
+    </setBody>
+  </route>
+  <route id="Put to cache multiple records">
+    <from uri="direct:putToCacheMulti"/>
+    <log message="Putting to cache ${header.cid} multiple documents" loggingLevel="INFO"/>
+    <marshal ref="json"/>
+    <split parallelProcessing="true">
+      <method>net.gmsworld.server.camel.JsonArraySplitter</method>
+      <to uri="direct:putToCache"/>
+    </split>
+    <setBody>
+      <simple>{"status" : "ok"}</simple>
+    </setBody>
+  </route>
+  <route id="Get from cache">
+    <from uri="direct:getFromCache"/>
+    <log message="Get all from cache ${header.cid} with limit ${header.limit}" loggingLevel="INFO"/>
+    <setHeader headerName="CamelMongoDbSortBy">
+      <simple>{"_id" : -1}</simple>
+    </setHeader>
+    <setHeader headerName="CamelMongoDbLimit">
+      <simple>${header.limit}</simple>
+    </setHeader>
+    <setHeader headerName="CamelMongoDbBatchSize">
+      <constant>100</constant>
+    </setHeader>
+    <recipientList>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    </recipientList>
+  </route>
+  <route id="Get by query from cache">
+    <from uri="direct:getByQueryFromCache"/>
+    <when>
+      <simple>${header.limit.toString().trim()} == '' || ${header.limit} &gt; 100</simple>
+      <setHeader headerName="limit">
+        <simple>100</simple>
+      </setHeader>
+      <log message="Normalized limit to 100"/>
+      <log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value} with limit ${header.limit}" loggingLevel="INFO"/>
+      <setBody>
+        <simple>{"${header.property}" : "${header.value}"}</simple>
+      </setBody>
+      <setHeader headerName="CamelMongoDbSortBy">
+        <simple>{"_id" : -1}</simple>
+      </setHeader>
+      <setHeader headerName="CamelMongoDbLimit">
+        <simple>${header.limit}</simple>
+      </setHeader>
+      <recipientList>
+        <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+      </recipientList>
+    </when>
+  </route>
+  <route id="Get nearby from cache">
+    <from uri="direct:getNearbyFromCache"/>
+    <log message="Get from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance} limit ${header.limit}" loggingLevel="INFO"/>
+    <setBody>
+      <simple>{ "geometry" : { $near : { $geometry : { type : "Point" , coordinates : [ ${header.lng} , ${header.lat} ] } , $maxDistance : ${header.distance} } } }</simple>
+    </setBody>
+    <setHeader headerName="CamelMongoDbSortBy">
+      <simple>{"_id" : -1}</simple>
+    </setHeader>
+    <setHeader headerName="CamelMongoDbLimit">
+      <simple>${header.limit}</simple>
+    </setHeader>
+    <recipientList>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    </recipientList>
+  </route>
+  <route id="Delete from cache">
+    <from uri="direct:deleteFromCache"/>
+    <log message="Delete from cache ${header.cid} objects matching ${header.property} : ${header.value}" loggingLevel="INFO"/>
+    <setBody>
+      <simple>{"${header.property}" : "${header.value}"}</simple>
+    </setBody>
+    <recipientList>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=remove</simple>
+    </recipientList>
+    <setBody>
+      <header>CamelMongoDbRecordsAffected</header>
+    </setBody>
+  </route>
+</camelContext>
 
 </beans>
