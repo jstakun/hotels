@@ -27,9 +27,15 @@
     <restConfiguration bindingMode="auto" component="servlet" contextPath="/camel" />
      
     <rest>
-  		<!--get uri="/v1/cache/{cid}">
+  		<get uri="/v1/cache/{cid}">
+    		<setHeader headerName="limit">
+        		<constant>100</constant>
+        	</setHeader>
     		<to uri="direct:getFromCache"/>
-  		</get-->
+  		</get>
+  		<get uri="/v1/cache/{cid}/{limit}">
+    		<to uri="direct:getFromCache"/>
+  		</get>
   		<get uri="/v1/cache/{cid}/{property}/{value}">
   		    <setHeader headerName="limit">
         		<constant>1</constant>
@@ -84,7 +90,7 @@
         	<simple>{"_id" : -1}</simple>
         </setHeader>
         <setHeader headerName="CamelMongoDbLimit">
-        	<constant>100</constant>
+        	<simple>${header.limit}</simple>
         </setHeader>
         <setHeader headerName="CamelMongoDbBatchSize">
         	<constant>100</constant>
