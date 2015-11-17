@@ -81,7 +81,7 @@
   <route id="Get from cache">
     <from uri="direct:getFromCache"/>
     <validate>
-    	<simple>${header.limit} &lt; 101</simple>
+    	<simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 101</simple>
     </validate>    
     <log message="Get all from cache ${header.cid} with limit ${header.limit}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
@@ -107,7 +107,7 @@
   <route id="Get by query from cache">
     <from uri="direct:getByQueryFromCache"/>
     <validate>
-    	<simple>${header.limit} &lt; 101</simple>
+    	<simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 101</simple>
     </validate> 
     <log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value} with limit ${header.limit}" loggingLevel="INFO"/>
     <setBody>
@@ -125,8 +125,11 @@
   </route>
   <route id="Get nearby from cache">
     <from uri="direct:getNearbyFromCache"/>
-     <validate>
-    	<simple>${header.limit} &lt; 501</simple>
+    <validate>
+    	<simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 501</simple>
+    </validate> 
+    <validate>
+    	<simple>${header.distance} &gt; 0 &amp;&amp; ${header.distance} &lt; 1000001</simple>
     </validate> 
     <log message="Get from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance} limit ${header.limit}" loggingLevel="INFO"/>
     <setBody>
