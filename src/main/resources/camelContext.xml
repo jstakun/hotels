@@ -25,13 +25,13 @@
   <restConfiguration component="servlet" contextPath="/camel" bindingMode="auto"/>
   <rest>
     <get uri="/v1/cache/{cid}">
-      <to uri="direct:getFromCache"/>
+      <to uri="direct:getFromCacheUnlimited"/>
     </get>
     <get uri="/v1/cache/{cid}/{limit}">
       <to uri="direct:getFromCache"/>
     </get>
     <get uri="/v1/cache/{cid}/{property}/{value}">
-      <to uri="direct:getByQueryFromCache"/>
+      <to uri="direct:getByQueryFromCacheUnlimited"/>
     </get>
     <get uri="/v1/cache/{cid}/{property}/{value}/{limit}">
       <to uri="direct:getByQueryFromCache"/>
@@ -71,11 +71,18 @@
       <simple>{"status" : "ok"}</simple>
     </setBody>
   </route>
+  <route id="Get from cache unlimited">
+    <from uri="direct:getFromCacheUnlimited"/>
+    <setHeader headerName="limit">
+          <simple>100</simple>
+    </setHeader>
+    <to uri="direct:getFromCache"/>
+  </route>  
   <route id="Get from cache">
     <from uri="direct:getFromCache"/>
     <validate>
-        <simple>${header.limit} == null || ${header.limit} &lt; 101</simple>
-    </validate>
+    	<simple>${header.limit} &lt; 101</simple>
+    </validate>    
     <log message="Get all from cache ${header.cid} with limit ${header.limit}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
       <simple>{"_id" : -1}</simple>
@@ -90,8 +97,18 @@
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
   </route>
+  <route id="Get by query from cache unlimited">
+    <from uri="direct:getByQueryFromCacheUnlimited"/>
+    <setHeader headerName="limit">
+          <simple>100</simple>
+    </setHeader>
+    <to uri="direct:getByQueryFromCache"/>
+  </route>  
   <route id="Get by query from cache">
     <from uri="direct:getByQueryFromCache"/>
+    <validate>
+    	<simple>${header.limit} &lt; 101</simple>
+    </validate> 
     <log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value} with limit ${header.limit}" loggingLevel="INFO"/>
     <setBody>
       <simple>{"${header.property}" : "${header.value}"}</simple>
@@ -108,6 +125,9 @@
   </route>
   <route id="Get nearby from cache">
     <from uri="direct:getNearbyFromCache"/>
+     <validate>
+    	<simple>${header.limit} &lt; 501</simple>
+    </validate> 
     <log message="Get from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance} limit ${header.limit}" loggingLevel="INFO"/>
     <setBody>
       <simple>{ "geometry" : { $near : { $geometry : { type : "Point" , coordinates : [ ${header.lng} , ${header.lat} ] } , $maxDistance : ${header.distance} } } }</simple>
