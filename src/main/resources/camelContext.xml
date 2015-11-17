@@ -31,7 +31,13 @@
     		<to uri="direct:getFromCache"/>
   		</get-->
   		<get uri="/v1/cache/{cid}/{property}/{value}">
+  		    <setHeader headerName="limit">
+        		<constant>1</constant>
+        	</setHeader>
     		<to uri="direct:getByQueryFromCache"/>
+  		</get>
+  		<get uri="/v1/cache/{cid}/{property}/{value}/{limit}">
+  		    <to uri="direct:getByQueryFromCache"/>
   		</get>
   		<get uri="/v1/cache/{cid}/nearby/{lat}/{lng}/{distance}/{limit}">
     		<to uri="direct:getNearbyFromCache"/>
@@ -98,7 +104,7 @@
         	<simple>{"_id" : -1}</simple>
         </setHeader>
         <setHeader headerName="CamelMongoDbLimit">
-        	<constant>1</constant>
+        	<simple>${header.limit}</simple>
         </setHeader>
         <recipientList>
     		<simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
@@ -107,7 +113,7 @@
     
     <route customId="true" id="Get nearby from cache">
     	<from uri="direct:getNearbyFromCache"/>
-    	<log message="Get from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance}" loggingLevel="INFO"/>
+    	<log message="Get from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance} limit ${header.limit}" loggingLevel="INFO"/>
     	<setBody>
           	<simple>{ "geometry" : { $near : { $geometry : { type : "Point" , coordinates : [ ${header.lng} , ${header.lat} ] } , $maxDistance : ${header.distance} } } }</simple>
         </setBody>
