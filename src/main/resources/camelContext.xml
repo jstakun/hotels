@@ -28,19 +28,13 @@
      
     <rest>
   		<get uri="/v1/cache/{cid}">
-    		<setHeader headerName="limit">
-        		<constant>100</constant>
-        	</setHeader>
     		<to uri="direct:getFromCache"/>
   		</get>
   		<get uri="/v1/cache/{cid}/{limit}">
     		<to uri="direct:getFromCache"/>
   		</get>
   		<get uri="/v1/cache/{cid}/{property}/{value}">
-  		    <setHeader headerName="limit">
-        		<constant>1</constant>
-        	</setHeader>
-    		<to uri="direct:getByQueryFromCache"/>
+  		    <to uri="direct:getByQueryFromCache"/>
   		</get>
   		<get uri="/v1/cache/{cid}/{property}/{value}/{limit}">
   		    <to uri="direct:getByQueryFromCache"/>
