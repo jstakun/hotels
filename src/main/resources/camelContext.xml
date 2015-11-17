@@ -83,7 +83,7 @@
     <validate>
     	<simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 101</simple>
     </validate>    
-    <log message="Get all from cache ${header.cid} with limit ${header.limit}" loggingLevel="INFO"/>
+    <log message="Get all from cache ${header.cid} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
       <simple>{"_id" : -1}</simple>
     </setHeader>
@@ -109,7 +109,7 @@
     <validate>
     	<simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 101</simple>
     </validate> 
-    <log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value} with limit ${header.limit}" loggingLevel="INFO"/>
+    <log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setBody>
       <simple>{"${header.property}" : "${header.value}"}</simple>
     </setBody>
@@ -131,7 +131,7 @@
     <validate>
     	<simple>${header.distance} &gt; 0 &amp;&amp; ${header.distance} &lt; 1000001</simple>
     </validate> 
-    <log message="Get from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance} limit ${header.limit}" loggingLevel="INFO"/>
+    <log message="Get from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setBody>
       <simple>{ "geometry" : { $near : { $geometry : { type : "Point" , coordinates : [ ${header.lng} , ${header.lat} ] } , $maxDistance : ${header.distance} } } }</simple>
     </setBody>
