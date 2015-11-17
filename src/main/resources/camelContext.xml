@@ -74,7 +74,7 @@
   <route id="Get from cache">
     <from uri="direct:getFromCache"/>
     <validate>
-        <simple>${header.limit.toString().trim()} == '' || ${header.limit} &lt; 100</simple>
+        <simple>${header.limit} == null || ${header.limit} &lt; 101</simple>
     </validate>
     <log message="Get all from cache ${header.cid} with limit ${header.limit}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
