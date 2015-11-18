@@ -30,6 +30,9 @@
     <get uri="/v1/cache/{cid}/{limit}">
       <to uri="direct:getFromCache"/>
     </get>
+    <get uri="/v1/cache/{cid}/count">
+      <to uri="direct:getFromCacheCount"/>
+    </get>
     <get uri="/v1/cache/{cid}/{property}/{value}">
       <to uri="direct:getByQueryFromCacheUnlimited"/>
     </get>
@@ -95,6 +98,13 @@
     </setHeader>
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    </recipientList>
+  </route>
+  <route id="Get from cache count">
+    <from uri="direct:getFromCacheCount"/>
+    <log message="Get count from cache ${header.cid} by user ${header.authorization}" loggingLevel="INFO"/>
+    <recipientList>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=count</simple>
     </recipientList>
   </route>
   <route id="Get by query from cache unlimited">
