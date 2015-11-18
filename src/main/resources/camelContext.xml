@@ -30,7 +30,7 @@
     <get uri="/v1/cache/{cid}/{limit}">
       <to uri="direct:getFromCache"/>
     </get>
-    <get uri="/v1/cache/{cid}/count">
+    <get uri="/v1/cache/count/{cid}">
       <to uri="direct:getFromCacheCount"/>
     </get>
     <get uri="/v1/cache/{cid}/{property}/{value}">
