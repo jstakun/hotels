@@ -37,12 +37,12 @@ public class CacheService {
 	@Inject
 	private DBConnection dbConnection;
 	
-	private DBCollection getCollection(String name) {
+	private DBCollection getCollection(String name, boolean create) {
 		DB db = dbConnection.getDB();
 		DBCollection itemsListCollection = null;
 		if (db.collectionExists(name)) {
 			itemsListCollection = db.getCollection(name);
-	    } else {
+	    } else if (create) {
 	        DBObject options = BasicDBObjectBuilder.start().add("capped", true).add("size", 1000000l).add("max", 50).get();
 	        itemsListCollection = db.createCollection(name, options);
 	    }
@@ -58,15 +58,17 @@ public class CacheService {
 	public List<String> getAllItems(@PathParam("lat") String latitude, @PathParam("lng") String longitude) {
 		List<String> allItemsList = new ArrayList<String>();
 
-		DBCollection collection = this.getCollection(getCollectionId(latitude, longitude));
-		DBCursor cursor = collection.find();
-		try {
-			while (cursor.hasNext()) {
-				allItemsList.add(cursor.next().toString());
+		DBCollection collection = this.getCollection(getCollectionId(latitude, longitude), false);
+		if (collection != null) {
+			DBCursor cursor = collection.find();
+			try {
+				while (cursor.hasNext()) {
+					allItemsList.add(cursor.next().toString());
+				}
+			} finally {
+				cursor.close();
 			}
-		} finally {
-			cursor.close();
-		}
+	    }
 
 		return allItemsList;
 	}
@@ -77,22 +79,26 @@ public class CacheService {
 	public String getLayer(@PathParam("layer") String layer, @PathParam("lat") String latitude, @PathParam("lng") String longitude) {
 		String response = null;
 		String collectionId = getCollectionId(latitude, longitude);
-		DBCollection collection = this.getCollection(collectionId);
-		logger.log(Level.INFO, "Searching for " + collectionId);
-		BasicDBObject query = new BasicDBObject();
-		BasicDBObject fields = new BasicDBObject();
-		query.put("properties.layer", layer);
-		DBCursor cursor = collection.find(query, fields);
-		cursor.sort(new BasicDBObject("_id", -1)).limit(1);
-		try {
-			if (cursor.hasNext()) {
-				logger.log(Level.INFO, "Document found");
-				response = cursor.next().toString();
-			} else {
-				logger.log(Level.WARNING, "Document not found");
+		DBCollection collection = this.getCollection(collectionId, false);
+		if (collection != null) {
+			logger.log(Level.INFO, "Searching for " + collectionId);
+			BasicDBObject query = new BasicDBObject();
+			BasicDBObject fields = new BasicDBObject();
+			query.put("properties.layer", layer);
+			DBCursor cursor = collection.find(query, fields);
+			cursor.sort(new BasicDBObject("_id", -1)).limit(1);
+			try {
+				if (cursor.hasNext()) {
+					logger.log(Level.INFO, "Document found");
+					response = cursor.next().toString();
+				} else {
+					logger.log(Level.WARNING, "Document not found");
+				}
+			} finally {
+				cursor.close();
 			}
-		} finally {
-			cursor.close();
+		} else {
+			logger.log(Level.WARNING, "Collection " + collectionId + " not found");
 		}
 		return response;  
 	}
@@ -102,7 +108,7 @@ public class CacheService {
 	@Path("/geojson/{lat}/{lng}")
 	public Response insertToCache(@PathParam("lat") String latitude, @PathParam("lng") String longitude, String document) {
 		String collectionId = getCollectionId(latitude, longitude);
-		DBCollection collection = this.getCollection(collectionId);
+		DBCollection collection = this.getCollection(collectionId, true);
 		logger.log(Level.INFO, "Saving document to colletion " + collectionId);
 		DBObject dbo = (DBObject)JSON.parse(document);
 		dbo.put("creationDate", new Date());
@@ -123,7 +129,7 @@ public class CacheService {
 	@Path("/{key}")
 	public String getLayer(@PathParam("key") String key) {
 		String response = null;
-		DBCollection collection = getCollection(SECOND_LEVEL_CACHE);
+		DBCollection collection = getCollection(SECOND_LEVEL_CACHE, true);
 		logger.log(Level.INFO, "Searching for " + SECOND_LEVEL_CACHE);
 		BasicDBObject query = new BasicDBObject();
 		BasicDBObject fields = new BasicDBObject();
@@ -147,7 +153,7 @@ public class CacheService {
 	@Consumes("application/json")
 	@Path("/{key}")
 	public Response insertToCache(@PathParam("key") String key, String document) {
-		DBCollection collection = getCollection(SECOND_LEVEL_CACHE);
+		DBCollection collection = getCollection(SECOND_LEVEL_CACHE, true);
 		logger.log(Level.INFO, "Saving document to colletion " + SECOND_LEVEL_CACHE);
 		DBObject dbo = (DBObject)JSON.parse(document);
 		dbo.put("key", key);

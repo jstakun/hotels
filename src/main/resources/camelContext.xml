@@ -5,20 +5,20 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+ <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
     	<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
     	<property name="searchSystemEnvironment" value="true" />
-  </bean> 
+ </bean> 
   
-  <bean id="cloudDb" class="com.mongodb.Mongo">
+ <bean id="cloudDb" class="com.mongodb.Mongo">
      <constructor-arg index="0"> 
         <bean class="com.mongodb.MongoURI"> 
             <constructor-arg index="0" value="${OPENSHIFT_MONGODB_DB_URL}${OPENSHIFT_MONGODB_DATABASE}" />
         </bean> 
     </constructor-arg>
-  </bean>
+ </bean>
   
-  <camelContext trace="false" id="DBManager" xmlns="http://camel.apache.org/schema/spring">
+ <camelContext trace="false" id="DBManager" xmlns="http://camel.apache.org/schema/spring">
   <dataFormats>
     <json library="Jackson" id="json"/>
   </dataFormats>
@@ -80,15 +80,15 @@
   <route id="Get from cache unlimited">
     <from uri="direct:getFromCacheUnlimited"/>
     <setHeader headerName="limit">
-          <simple>100</simple>
+      <simple>100</simple>
     </setHeader>
     <to uri="direct:getFromCache"/>
-  </route>  
+  </route>
   <route id="Get from cache">
     <from uri="direct:getFromCache"/>
     <validate>
-    	<simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 101</simple>
-    </validate>    
+      <simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 101</simple>
+    </validate>
     <log message="Get all from cache ${header.cid} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
       <simple>{"_id" : -1}</simple>
@@ -113,15 +113,15 @@
   <route id="Get by query from cache unlimited">
     <from uri="direct:getByQueryFromCacheUnlimited"/>
     <setHeader headerName="limit">
-          <simple>100</simple>
+      <simple>100</simple>
     </setHeader>
     <to uri="direct:getByQueryFromCache"/>
-  </route>  
+  </route>
   <route id="Get by query from cache">
     <from uri="direct:getByQueryFromCache"/>
     <validate>
-    	<simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 101</simple>
-    </validate> 
+      <simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 101</simple>
+    </validate>
     <log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setBody>
       <simple>{"${header.property}" : "${header.value}"}</simple>
@@ -139,11 +139,11 @@
   <route id="Get nearby from cache">
     <from uri="direct:getNearbyFromCache"/>
     <validate>
-    	<simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 501</simple>
-    </validate> 
+      <simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 501</simple>
+    </validate>
     <validate>
-    	<simple>${header.distance} &gt; 0 &amp;&amp; ${header.distance} &lt; 1000001</simple>
-    </validate> 
+      <simple>${header.distance} &gt; 0 &amp;&amp; ${header.distance} &lt; 1000001</simple>
+    </validate>
     <log message="Get from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setBody>
       <simple>{ "geometry" : { $near : { $geometry : { type : "Point" , coordinates : [ ${header.lng} , ${header.lat} ] } , $maxDistance : ${header.distance} } } }</simple>
