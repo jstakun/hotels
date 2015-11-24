@@ -124,7 +124,7 @@ public class CacheService {
 			cursor.sort(new BasicDBObject("_id", -1)).limit(1);
 			try {
 				if (cursor.hasNext()) {
-					logger.log(Level.INFO, "Document found");
+					logger.log(Level.INFO, "Document found");   
 					response = cursor.next().toString();
 				} else {
 					logger.log(Level.WARNING, "Document not found");
