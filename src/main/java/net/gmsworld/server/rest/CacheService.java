@@ -50,7 +50,11 @@ public class CacheService {
 		return itemsListCollection;
 	}
 	
-	//geojson cache endpoints
+	private static String getCollectionId(String latitude, String longitude) {
+		return "geojson_" + latitude.replace('.', '_') + "_" + longitude.replace('.', '_');
+	}
+	
+	//get endpoints
 	
 	@GET
 	@Produces("application/json")
@@ -103,31 +107,41 @@ public class CacheService {
 		return response;  
 	}
 	
-	@POST
-	@Consumes("application/json")
-	@Path("/geojson/{lat}/{lng}")
-	public Response insertToCache(@PathParam("lat") String latitude, @PathParam("lng") String longitude, String document) {
+	@GET
+	@Produces("application/json")
+	@Path("/geojson/{layer}/{lat}/{lng}/{language}")
+	public String getLayer(@PathParam("layer") String layer, @PathParam("lat") String latitude, @PathParam("lng") String longitude, @PathParam("language") String language) {
+		String response = null;
 		String collectionId = getCollectionId(latitude, longitude);
-		DBCollection collection = this.getCollection(collectionId, true);
-		logger.log(Level.INFO, "Saving document to colletion " + collectionId);
-		DBObject dbo = (DBObject)JSON.parse(document);
-		dbo.put("creationDate", new Date());
-		WriteResult wr = collection.insert(dbo);
-		if (wr.getError() != null) {
-			logger.log(Level.SEVERE, "Failed to save document " + wr.getError());
-			return Response.status(500).entity("Failed to save document " + wr.getError()).build();
+		DBCollection collection = this.getCollection(collectionId, false);
+		if (collection != null) {
+			logger.log(Level.INFO, "Searching for " + collectionId);
+			BasicDBObject query = new BasicDBObject();
+			BasicDBObject fields = new BasicDBObject();
+			query.put("properties.layer", layer);
+			query.put("properties.language", language);
+			DBCursor cursor = collection.find(query, fields);
+			cursor.sort(new BasicDBObject("_id", -1)).limit(1);
+			try {
+				if (cursor.hasNext()) {
+					logger.log(Level.INFO, "Document found");
+					response = cursor.next().toString();
+				} else {
+					logger.log(Level.WARNING, "Document not found");
+				}
+			} finally {
+				cursor.close();
+			}
 		} else {
-			logger.log(Level.INFO, "Document saved");
-			return Response.status(200).entity("Document saved").build();
-		}  
+			logger.log(Level.WARNING, "Collection " + collectionId + " not found");
+		}
+		return response;  
 	}
-	
-	// second level cache endpoints
 	
 	@GET
 	@Produces("application/json")
 	@Path("/{key}")
-	public String getLayer(@PathParam("key") String key) {
+	public String getDocument(@PathParam("key") String key) {
 		String response = null;
 		DBCollection collection = getCollection(SECOND_LEVEL_CACHE, true);
 		logger.log(Level.INFO, "Searching for " + SECOND_LEVEL_CACHE);
@@ -149,6 +163,27 @@ public class CacheService {
 		return response;  
 	}
 	
+	//post endpoints
+	
+	@POST
+	@Consumes("application/json")
+	@Path("/geojson/{lat}/{lng}")
+	public Response insertToCache(@PathParam("lat") String latitude, @PathParam("lng") String longitude, String document) {
+		String collectionId = getCollectionId(latitude, longitude);
+		DBCollection collection = this.getCollection(collectionId, true);
+		logger.log(Level.INFO, "Saving document to colletion " + collectionId);
+		DBObject dbo = (DBObject)JSON.parse(document);
+		dbo.put("creationDate", new Date());
+		WriteResult wr = collection.insert(dbo);
+		if (wr.getError() != null) {
+			logger.log(Level.SEVERE, "Failed to save document " + wr.getError());
+			return Response.status(500).entity("Failed to save document " + wr.getError()).build();
+		} else {
+			logger.log(Level.INFO, "Document saved");
+			return Response.status(200).entity("Document saved").build();
+		}  
+	}
+	
 	@POST
 	@Consumes("application/json")
 	@Path("/{key}")
@@ -166,10 +201,5 @@ public class CacheService {
 			logger.log(Level.INFO, "Document saved");
 			return Response.status(200).entity("Document saved").build();
 		}  
-	}
-	
-	private static String getCollectionId(String latitude, String longitude) {
-		return "geojson_" + latitude.replace('.', '_') + "_" + longitude.replace('.', '_');
-	}
-
+	}	
 }
