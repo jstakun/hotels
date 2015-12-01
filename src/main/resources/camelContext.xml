@@ -64,6 +64,7 @@
     <setBody>
       <header>CamelMongoOid</header>
     </setBody>
+    <log message="Inserted to db document with id ${header.CamelMongoOid}" loggingLevel="INFO"/>
   </route>
   <route id="Put to cache multiple records">
     <from uri="direct:putToCacheMulti"/>
