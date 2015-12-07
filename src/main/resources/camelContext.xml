@@ -149,9 +149,6 @@
     <setBody>
       <simple>{ "geometry" : { $near : { $geometry : { type : "Point" , coordinates : [ ${header.lng} , ${header.lat} ] } , $maxDistance : ${header.distance} } } }</simple>
     </setBody>
-    <setHeader headerName="CamelMongoDbSortBy">
-      <simple>{"_id" : -1}</simple>
-    </setHeader>
     <setHeader headerName="CamelMongoDbLimit">
       <simple>${header.limit}</simple>
     </setHeader>
