@@ -13,7 +13,7 @@
     <camel.version>2.15.5</camel.version>
     <spring.version>3.2.13.RELEASE</spring.version>
   </properties>
-  <repositories>
+  <!-- repositories>
 		<repository>
 			<id>eap</id>
 			<url>http://maven.repository.redhat.com/techpreview/all</url>
@@ -36,7 +36,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</pluginRepository>
-  </pluginRepositories>
+  </pluginRepositories-->
   <dependencies>
     <dependency>
       	<groupId>org.jboss.spec</groupId>
