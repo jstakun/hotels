@@ -2,4 +2,5 @@
 <jboss-web>
     <!-- security-domain>java:/jaas/dbRealm</security-domain-->
     <security-domain>java:/jaas/other</security-domain>
+    <context-root>/</context-root>
 </jboss-web>

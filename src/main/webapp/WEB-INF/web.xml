@@ -26,8 +26,6 @@
     <param-value>camel</param-value>
   </init-param>
   <init-param>
-    <!-- we specify the api.path using relative notation, that means the actual path will be calculated at runtime as
-         http://server:port/contextpath/api-docs -->
     <param-name>api.path</param-name>
     <param-value>api-docs</param-value>
   </init-param>
