@@ -9,6 +9,10 @@
  <listener>
   <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
  </listener>
+ <filter>
+  <filter-name>RestSwaggerCorsFilter</filter-name>
+  <filter-class>org.apache.camel.component.swagger.RestSwaggerCorsFilter</filter-class>
+</filter>
  <servlet>
   <servlet-name>CamelServlet</servlet-name>
   <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
@@ -41,6 +45,11 @@
   </init-param>
   <load-on-startup>2</load-on-startup>
  </servlet>
+ <filter-mapping>
+  <filter-name>RestSwaggerCorsFilter</filter-name>
+  <url-pattern>/api-docs/*</url-pattern>
+  <url-pattern>/camel/*</url-pattern>
+</filter-mapping>
  <servlet-mapping>
   <servlet-name>javax.ws.rs.core.Application</servlet-name>
   <url-pattern>/rest/*</url-pattern>
