@@ -10,8 +10,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
-    <camel.version>2.15.1</camel.version>
-    <spring.version>3.2.12.RELEASE</spring.version>
+    <camel.version>2.15.5</camel.version>
+    <spring.version>3.2.13.RELEASE</spring.version>
   </properties>
   <repositories>
 		<repository>
