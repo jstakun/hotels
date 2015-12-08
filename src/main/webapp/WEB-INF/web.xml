@@ -14,6 +14,33 @@
   <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
   <load-on-startup>1</load-on-startup>
  </servlet>
+ <servlet>
+   <servlet-name>ApiDeclarationServlet</servlet-name>
+   <servlet-class>org.apache.camel.component.swagger.DefaultCamelSwaggerServlet</servlet-class>
+   <init-param>
+    <param-name>base.path</param-name>
+    <param-value>camel</param-value>
+  </init-param>
+  <init-param>
+    <!-- we specify the api.path using relative notation, that means the actual path will be calculated at runtime as
+         http://server:port/contextpath/api-docs -->
+    <param-name>api.path</param-name>
+    <param-value>api-docs</param-value>
+  </init-param>
+  <init-param>
+    <param-name>api.version</param-name>
+    <param-value>1.0.0</param-value>
+  </init-param>
+  <init-param>
+    <param-name>api.title</param-name>
+    <param-value>Hotels database services</param-value>
+  </init-param>
+  <init-param>
+    <param-name>api.description</param-name>
+    <param-value>Services for manipulating hotels booking database</param-value>
+  </init-param>
+  <load-on-startup>2</load-on-startup>
+ </servlet>
  <servlet-mapping>
   <servlet-name>javax.ws.rs.core.Application</servlet-name>
   <url-pattern>/rest/*</url-pattern>
@@ -22,6 +49,10 @@
   <servlet-name>CamelServlet</servlet-name>
   <url-pattern>/camel/*</url-pattern>
  </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>ApiDeclarationServlet</servlet-name>
+  <url-pattern>/api-docs/*</url-pattern>
+</servlet-mapping>
  <security-constraint>
   <display-name>Reader Area</display-name>
   <web-resource-collection>
