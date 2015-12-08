@@ -107,6 +107,12 @@
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
         </dependency>	
+        <!-- weld issue workaround -->
+        <dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>11.0</version>
+		</dependency>
   </dependencies>
   <profiles>
     <profile>
