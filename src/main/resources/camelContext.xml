@@ -23,7 +23,7 @@
   <dataFormats>
     <json library="Jackson" id="json"/>
   </dataFormats>
-  <!--onException>
+  <!--onException>  
      <exception>java.lang.Exception</exception>
      <handled>
           <constant>true</constant>
