@@ -30,7 +30,7 @@
      </handled>
      <log message="Operation failed with exception: ${exception.stacktrace}" loggingLevel="ERROR" logName="com.redhat.waw.camel"/>
      <transform>
-          <simple>{date.now.yyyy.MM.dd HH:mm:ss}} ERROR Operation failed with message: ${exception.message}</simple>
+          <simple>${date.now.yyyy.MM.dd HH:mm:ss}} ERROR Operation failed with message: ${exception.message}</simple>
      </transform>
   </onException>
   <restConfiguration component="servlet" contextPath="/camel" bindingMode="auto"/>
