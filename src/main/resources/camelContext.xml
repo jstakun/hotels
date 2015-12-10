@@ -151,10 +151,10 @@
   <route id="Get nearby from cache">
     <from uri="direct:getNearbyFromCache"/>
     <validate>
-      <simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 1001</simple>
+      <simple>${header.limit} &gt; 0 &amp;&amp; (${header.limit} &lt; {{nearbyLimit}} || ${header.limit} == {{nearbyLimit}})</simple>
     </validate>
     <validate>
-      <simple>${header.distance} &gt; 0 &amp;&amp; ${header.distance} &lt; 1000001</simple>
+      <simple>${header.distance} &gt; 0 &amp;&amp; (${header.distance} &lt; {{distanceLimit}} || ${header.distance} == {{distanceLimit}})</simple>
     </validate>
     <log message="Get from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setBody>
