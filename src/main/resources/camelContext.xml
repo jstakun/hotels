@@ -19,9 +19,20 @@
  </bean>
   
  <camelContext trace="false" id="DBManager" xmlns="http://camel.apache.org/schema/spring">
+  <onException>
+     <exception>java.lang.Exception</exception>
+     <handled>
+          <constant>true</constant>
+     </handled>
+     <log message="Operation failed with message: ${exception}" loggingLevel="ERROR" logName="com.redhat.waw.camel"/>
+     <transform>
+          <simple>Operation failed with message: ${exception.message}</simple>
+     </transform>
+  </onException>
   <dataFormats>
     <json library="Jackson" id="json"/>
   </dataFormats>
+  <propertyPlaceholder id="properties" location="classpath:/config.properties"/>
   <restConfiguration component="servlet" contextPath="/camel" bindingMode="auto"/>
   <rest>
     <get uri="/v1/cache/{cid}">
@@ -81,7 +92,7 @@
   <route id="Get from cache unlimited">
     <from uri="direct:getFromCacheUnlimited"/>
     <setHeader headerName="limit">
-      <simple>100</simple>
+      <simple>{{batchLimit}}</simple>
     </setHeader>
     <to uri="direct:getFromCache"/>
   </route>
