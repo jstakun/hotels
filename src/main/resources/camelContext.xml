@@ -23,7 +23,7 @@
   <dataFormats>
     <json library="Jackson" id="json"/>
   </dataFormats>
-  <onException>
+  <!--onException>
      <exception>java.lang.Exception</exception>
      <handled>
           <constant>true</constant>
@@ -32,7 +32,7 @@
      <transform>
           <simple>Operation failed with message: ${exception.message}</simple>
      </transform>
-  </onException>
+  </onException-->
   <restConfiguration component="servlet" contextPath="/camel" bindingMode="auto"/>
   <rest>
     <get uri="/v1/cache/{cid}">
