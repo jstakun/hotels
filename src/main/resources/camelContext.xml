@@ -99,7 +99,7 @@
   <route id="Get from cache">
     <from uri="direct:getFromCache"/>
     <validate>
-      <simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 101</simple>
+      <simple>${header.limit} &gt; 0 &amp;&amp; (${header.limit} &lt; {{batchLimit}} || ${header.limit} == {{batchLimit}})</simple>
     </validate>
     <log message="Get all from cache ${header.cid} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
@@ -109,7 +109,7 @@
       <simple>${header.limit}</simple>
     </setHeader>
     <setHeader headerName="CamelMongoDbBatchSize">
-      <constant>100</constant>
+      <constant>{{batchLimit}}</constant>
     </setHeader>
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
@@ -125,14 +125,14 @@
   <route id="Get by query from cache unlimited">
     <from uri="direct:getByQueryFromCacheUnlimited"/>
     <setHeader headerName="limit">
-      <simple>100</simple>
+      <simple>{{batchLimit}}</simple>
     </setHeader>
     <to uri="direct:getByQueryFromCache"/>
   </route>
   <route id="Get by query from cache">
     <from uri="direct:getByQueryFromCache"/>
     <validate>
-      <simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; 101</simple>
+      <simple>${header.limit} &gt; 0 &amp;&amp; (${header.limit} &lt; {{batchLimit}} || ${header.limit} == {{batchLimit}})</simple>
     </validate>
     <log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setBody>
