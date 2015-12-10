@@ -99,7 +99,7 @@
   <route id="Get from cache">
     <from uri="direct:getFromCache"/>
     <validate>
-      <simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; {{batchLimit}}+1</simple>
+      <simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; ({{batchLimit}}+1)</simple>
     </validate>
     <log message="Get all from cache ${header.cid} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
@@ -132,7 +132,7 @@
   <route id="Get by query from cache">
     <from uri="direct:getByQueryFromCache"/>
     <validate>
-      <simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; {{batchLimit}}+1</simple>
+      <simple>${header.limit} &gt; 0 &amp;&amp; ${header.limit} &lt; ({{batchLimit}}+1)</simple>
     </validate>
     <log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setBody>
