@@ -59,7 +59,7 @@
       <to uri="direct:getNearbyFromCache"/>
     </get>
     <get uri="/v1/cache/{cid}/async/nearby/{lat}/{lng}/{distance}/{limit}">
-      <to uri="seda:getNearbyFromCache"/>
+      <to uri="seda:getNearbyFromCache?waitForTaskToComplete=Never"/>
     </get>
     <get uri="/v1/count/{cid}/nearby/{lat}/{lng}/{distance}">
       <to uri="direct:getNearbyFromCacheCount"/>
@@ -197,7 +197,7 @@
   
   <route id="Get nearby from cache and save">
     <from uri="seda:getNearbyFromCache"/>
-    <to uri="direct:getNearbyFromCacheCount"/>
+    <to uri="direct:getNearbyFromCache"/>
     <setHeader headerName="cid">
       <simple>cache</simple>
     </setHeader>
