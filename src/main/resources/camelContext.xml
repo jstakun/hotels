@@ -19,10 +19,13 @@
  </bean>
   
  <camelContext trace="false" id="DBManager" xmlns="http://camel.apache.org/schema/spring">
+  
   <propertyPlaceholder id="properties" location="classpath:/config.properties"/>
+  
   <dataFormats>
     <json library="Jackson" id="json"/>
   </dataFormats>
+  
   <onException>  
      <exception>java.lang.Exception</exception>
      <handled>
@@ -33,7 +36,9 @@
           <simple>${date:now:yyyy.MM.dd HH:mm:ss} ERROR Operation failed with message: ${exception.message}</simple>
      </transform>
   </onException>
+  
   <restConfiguration component="servlet" contextPath="/camel" bindingMode="auto"/>
+  
   <rest>
     <get uri="/v1/cache/{cid}">
       <to uri="direct:getFromCacheUnlimited"/>
@@ -53,6 +58,9 @@
     <get uri="/v1/cache/{cid}/nearby/{lat}/{lng}/{distance}/{limit}">
       <to uri="direct:getNearbyFromCache"/>
     </get>
+    <get uri="/v1/cache/{cid}/async/nearby/{lat}/{lng}/{distance}/{limit}">
+      <to uri="seda:getNearbyFromCache"/>
+    </get>
     <get uri="/v1/count/{cid}/nearby/{lat}/{lng}/{distance}">
       <to uri="direct:getNearbyFromCacheCount"/>
     </get>
@@ -66,29 +74,33 @@
       <to uri="direct:deleteFromCache"/>
     </delete>
   </rest>
+  
   <route id="Put to cache">
     <from uri="direct:putToCache"/>
-    <log message="Putting to cache ${header.cid} one document" loggingLevel="INFO"/>
+    <log message="Putting to cache ${header.cid} document..." loggingLevel="INFO"/>
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=save</simple>
     </recipientList>
     <setBody>
       <header>CamelMongoOid</header>
     </setBody>
-    <log message="Inserted to db document with id ${header.CamelMongoOid}" loggingLevel="INFO"/>
+    <log message="Inserted to collection ${header.cid} document with id ${header.CamelMongoOid}." loggingLevel="INFO"/>
   </route>
+  
   <route id="Put to cache multiple records">
     <from uri="direct:putToCacheMulti"/>
-    <log message="Putting to cache ${header.cid} multiple documents" loggingLevel="INFO"/>
+    <log message="Putting to cache ${header.cid} multiple documents..." loggingLevel="INFO"/>
     <marshal ref="json"/>
     <split parallelProcessing="true">
       <method>net.gmsworld.server.camel.JsonArraySplitter</method>
       <to uri="direct:putToCache"/>
     </split>
+    <log message="Inserted to collection ${header.cid} multiple documents." loggingLevel="INFO"/>
     <setBody>
       <simple>{"status" : "ok"}</simple>
     </setBody>
   </route>
+  
   <route id="Get from cache unlimited">
     <from uri="direct:getFromCacheUnlimited"/>
     <setHeader headerName="limit">
@@ -96,6 +108,7 @@
     </setHeader>
     <to uri="direct:getFromCache"/>
   </route>
+  
   <route id="Get from cache">
     <from uri="direct:getFromCache"/>
     <validate>
@@ -115,6 +128,7 @@
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
   </route>
+  
   <route id="Get from cache count">
     <from uri="direct:getFromCacheCount"/>
     <log message="Get count from cache ${header.cid} by user ${header.authorization}" loggingLevel="INFO"/>
@@ -122,6 +136,7 @@
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=count</simple>
     </recipientList>
   </route>
+  
   <route id="Get by query from cache unlimited">
     <from uri="direct:getByQueryFromCacheUnlimited"/>
     <setHeader headerName="limit">
@@ -148,6 +163,7 @@
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
   </route>
+  
   <route id="Get nearby from cache">
     <from uri="direct:getNearbyFromCache"/>
     <validate>
@@ -167,6 +183,7 @@
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
   </route>
+  
   <route id="Get nearby from cache count">
     <from uri="direct:getNearbyFromCacheCount"/>
     <log message="Get count from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance} by user ${header.authorization}" loggingLevel="INFO"/>
@@ -177,6 +194,19 @@
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=count</simple>
     </recipientList>
   </route>
+  
+  <route id="Get nearby from cache and save">
+    <from uri="seda:getNearbyFromCache"/>
+    <to uri="direct:getNearbyFromCacheCount"/>
+    <setHeader headerName="cid">
+      <simple>cache</simple>
+    </setHeader>
+    <setBody>
+      <simple>{ "_id" : "${header.lng}_${header.lat}_${header.distance}_${header.limit}", "results" : ${body} }</simple>	
+    </setBody>
+    <to uri="direct:putToCache"/>
+  </route>
+  
   <route id="Delete from cache">
     <from uri="direct:deleteFromCache"/>
     <log message="Delete from cache ${header.cid} objects matching ${header.property} : ${header.value}" loggingLevel="INFO"/>
