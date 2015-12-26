@@ -182,6 +182,9 @@
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
+    <setHeader headerName="Content-Type">
+      <constant>application/json</constant>
+    </setHeader>
     <setBody>
       <simple>{ "type": "FeatureCollection", "_id" : "${header.lng}_${header.lat}_${header.distance}_${header.limit}", "features" : ${body} }</simple>	
     </setBody>
