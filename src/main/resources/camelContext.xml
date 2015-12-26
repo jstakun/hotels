@@ -182,6 +182,9 @@
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
+    <setBody>
+      <simple>{ "type": "FeatureCollection", "_id" : "${header.lng}_${header.lat}_${header.distance}_${header.limit}", "features" : ${body} }</simple>	
+    </setBody>
   </route>
   
   <route id="Get nearby from cache count">
@@ -201,9 +204,6 @@
     <setHeader headerName="cid">
       <simple>cache</simple>
     </setHeader>
-    <setBody>
-      <simple>{ "_id" : "${header.lng}_${header.lat}_${header.distance}_${header.limit}", "results" : ${body} }</simple>	
-    </setBody>
     <to uri="direct:putToCache"/>
   </route>
   
