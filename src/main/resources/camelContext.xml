@@ -52,7 +52,7 @@
     <get uri="/v1/cache/{cid}/{property}/{value}">
       <to uri="direct:getByQueryFromCacheUnlimited"/>
     </get>
-    <get uri="/v1/id/{cid}/{oid}">
+    <get uri="/v1/one/{cid}/{property}/{value}">
       <to uri="direct:getByIdFromCache"/>
     </get>
     <get uri="/v1/cache/{cid}/{property}/{value}/{limit}">
@@ -168,14 +168,14 @@
     </recipientList>
   </route>
   
-  <route id="Get by id from cache">
+  <route id="Get one by property from cache">
     <from uri="direct:getByIdFromCache"/>
-    <log message="Get from cache ${header.cid} object with id ${header.oid} by user ${header.authorization}" loggingLevel="INFO"/>
+    <log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setBody>
-      <simple>{"_id" : "${header.oid}"}</simple>
+      <simple>{"${header.property}" : "${header.value}"}</simple>
     </setBody>
     <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findById</simple>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findOneByQuery</simple>
     </recipientList>
   </route>
   
