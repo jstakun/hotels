@@ -170,13 +170,10 @@
   
   <route id="Get by id from cache">
     <from uri="direct:getByIdFromCache"/>
-    <log message="Get from cache ${header.cid} object by ${header.oid} by user ${header.authorization}" loggingLevel="INFO"/>
+    <log message="Get from cache ${header.cid} object with id ${header.oid} by user ${header.authorization}" loggingLevel="INFO"/>
     <setBody>
       <simple>{"_id" : "${header.oid}"}</simple>
     </setBody>
-    <setHeader headerName="CamelMongoDbLimit">
-      <simple>${header.limit}</simple>
-    </setHeader>
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findById</simple>
     </recipientList>
