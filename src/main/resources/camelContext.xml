@@ -5,7 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
- <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+  <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
     	<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
     	<property name="searchSystemEnvironment" value="true" />
  </bean> 
@@ -23,7 +23,7 @@
   <propertyPlaceholder id="properties" location="classpath:/config.properties"/>
   
   <dataFormats>
-    <json library="Jackson" id="json"/>
+     <json library="Jackson" id="json"/>
   </dataFormats>
   
   <onException>  
@@ -51,6 +51,9 @@
     </get>
     <get uri="/v1/cache/{cid}/{property}/{value}">
       <to uri="direct:getByQueryFromCacheUnlimited"/>
+    </get>
+    <get uri="/v1/id/{cid}/{oid}">
+      <to uri="direct:getByIdFromCache"/>
     </get>
     <get uri="/v1/cache/{cid}/{property}/{value}/{limit}">
       <to uri="direct:getByQueryFromCache"/>
@@ -144,6 +147,7 @@
     </setHeader>
     <to uri="direct:getByQueryFromCache"/>
   </route>
+  
   <route id="Get by query from cache">
     <from uri="direct:getByQueryFromCache"/>
     <validate>
@@ -161,6 +165,20 @@
     </setHeader>
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    </recipientList>
+  </route>
+  
+  <route id="Get by id from cache">
+    <from uri="direct:getByIdFromCache"/>
+    <log message="Get from cache ${header.cid} object by ${header.oid} by user ${header.authorization}" loggingLevel="INFO"/>
+    <setBody>
+      <simple>{"_id" : "${header.oid}"}</simple>
+    </setBody>
+    <setHeader headerName="CamelMongoDbLimit">
+      <simple>${header.limit}</simple>
+    </setHeader>
+    <recipientList>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findById</simple>
     </recipientList>
   </route>
   
@@ -220,6 +238,7 @@
       <header>CamelMongoDbRecordsAffected</header>
     </setBody>
   </route>
-</camelContext>
+  
+ </camelContext>
 
 </beans>
