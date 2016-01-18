@@ -1,103 +1,137 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cache</groupId>
   <artifactId>cache</artifactId>
-  <packaging>war</packaging>
   <version>1.0</version>
+  <packaging>war</packaging>
   <name>cache</name>
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
     <camel.version>2.15.5</camel.version>
     <spring.version>3.2.13.RELEASE</spring.version>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
   <dependencies>
     <dependency>
-      	<groupId>org.jboss.spec</groupId>
-		<artifactId>jboss-javaee-6.0</artifactId>
-		<version>3.0.3.Final</version>
-		<type>pom</type>
-		<scope>provided</scope>
+      <groupId>org.jboss.spec</groupId>
+      <artifactId>jboss-javaee-6.0</artifactId>
+      <version>3.0.3.Final</version>
+      <type>pom</type>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-		<groupId>org.mongodb</groupId>
-		<artifactId>mongo-java-driver</artifactId>
-		<version>2.12.4</version>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>2.12.4</version>
+    </dependency>
+    <dependency>
+      <groupId>de.grundid.opendatalab</groupId>
+      <artifactId>geojson-jackson</artifactId>
+      <version>1.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20140107</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>${camel.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <version>${camel.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-servlet</artifactId>
+      <version>${camel.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mongodb</artifactId>
+      <version>${camel.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-swagger</artifactId>
+      <version>${camel.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>11.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <version>${camel.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+		<groupId>org.apache.camel</groupId>
+		<artifactId>camel-test-spring</artifactId>
+		<version>${camel.version}</version>
 	</dependency>
 	<dependency>
- 		<groupId>de.grundid.opendatalab</groupId>
- 		<artifactId>geojson-jackson</artifactId>
- 		<version>1.5</version>
-	</dependency>			
-	<dependency>
-    	<groupId>org.json</groupId>
-    	<artifactId>json</artifactId>
-    	<version>20140107</version>
-    </dependency>
-	<!-- camel -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-servlet</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
- 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-mongodb</artifactId>
-			<version>${camel.version}</version>
-		</dependency>
-		<dependency>
-    		<groupId>org.apache.camel</groupId>
-    		<artifactId>camel-swagger</artifactId>
-    		<version>${camel.version}</version>
-		</dependency>
-        <!-- spring -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-  		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-        </dependency>	
-        <!-- weld issue workaround -->
-        <dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>11.0</version>
-		</dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-simple</artifactId>
+		<version>1.7.13</version>
+	</dependency>
   </dependencies>
+  <build>
+    <plugins>
+    	<plugin>
+  			<groupId>org.eclipse.jetty</groupId>
+  			<artifactId>jetty-maven-plugin</artifactId>
+  			<version>9.1.5.v20140505</version>
+  			<configuration>
+    			<systemProperties>
+      				<systemProperty>
+         				<name>OPENSHIFT_MONGODB_DB_URL</name>
+         				<value>mongodb://localhost/</value>
+       				</systemProperty>
+       				<systemProperty>
+         				<name>OPENSHIFT_MONGODB_DATABASE</name>
+         				<value>cache</value>
+       				</systemProperty>
+    			</systemProperties>
+    			<!--webApp>
+      				<contextPath>/test</contextPath>
+    			</webApp-->
+   			</configuration>
+		</plugin>
+    </plugins>
+  </build>   
   <profiles>
     <profile>
-     <!-- When built in OpenShift the 'openshift' profile will be used when invoking mvn. -->
-     <!-- Use this profile for any OpenShift specific customization your app will need. -->
-     <!-- By default that is to put the resulting archive into the 'deployments' folder. -->
-     <!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
-     <id>openshift</id>
-     <build>
+      <id>openshift</id>
+      <build>
         <finalName>cache</finalName>
         <plugins>
           <plugin>

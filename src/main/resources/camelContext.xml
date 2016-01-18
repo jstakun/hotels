@@ -61,6 +61,9 @@
     <get uri="/v1/cache/{cid}/nearby/{lat}/{lng}/{distance}/{limit}">
       <to uri="direct:getNearbyFromCache"/>
     </get>
+    <get uri="/v1/cache/{cid}/cheapest/nearby/{lat}/{lng}/{distance}/{limit}">
+      <to uri="direct:getCheapestNearbyFromCache"/>
+    </get>
     <get uri="/v1/cache/{cid}/async/nearby/{lat}/{lng}/{distance}/{limit}">
       <to uri="seda:getNearbyFromCache?waitForTaskToComplete=Never"/>
     </get>
@@ -193,6 +196,29 @@
     </setBody>
     <setHeader headerName="CamelMongoDbLimit">
       <simple>${header.limit}</simple>
+    </setHeader>
+    <recipientList>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    </recipientList>
+  </route>
+  
+  <route id="Get cheapest nearby from cache">
+    <from uri="direct:getCheapestNearbyFromCache"/>
+    <validate>
+      <simple>${header.limit} range '1..{{nearbyLimit}}'</simple>
+    </validate>
+    <validate>
+      <simple>${header.distance} range '1..{{distanceLimit}}'</simple>
+    </validate>
+    <log message="Get cheapest from cache ${header.cid} documents near ${header.lat}, ${header.lng} in max distance ${header.distance} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
+    <setBody>
+      <simple>{ "properties.minrate" : { $gt : 0 },  "geometry" : { $near : { $geometry : { type : "Point" , coordinates : [ ${header.lng} , ${header.lat} ] } , $maxDistance : ${header.distance} } } }</simple>
+    </setBody>
+    <setHeader headerName="CamelMongoDbLimit">
+      <simple>${header.limit}</simple>
+    </setHeader>
+    <setHeader headerName="CamelMongoDbSortBy">
+      <simple>{"properties.minrate" : 1}</simple>
     </setHeader>
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>

@@ -49,10 +49,6 @@
   <url-pattern>/camel/*</url-pattern>
 </filter-mapping-->
  <servlet-mapping>
-  <servlet-name>javax.ws.rs.core.Application</servlet-name>
-  <url-pattern>/rest/*</url-pattern>
- </servlet-mapping>
- <servlet-mapping>
   <servlet-name>CamelServlet</servlet-name>
   <url-pattern>/camel/*</url-pattern>
  </servlet-mapping>
@@ -60,6 +56,11 @@
   <servlet-name>ApiDeclarationServlet</servlet-name>
   <url-pattern>/api-docs/*</url-pattern>
 </servlet-mapping>
+ <!-- comment for local testing -->
+ <servlet-mapping>
+  <servlet-name>javax.ws.rs.core.Application</servlet-name>
+  <url-pattern>/rest/*</url-pattern>
+ </servlet-mapping>
  <security-constraint>
   <display-name>Reader Area</display-name>
   <web-resource-collection>
@@ -88,7 +89,6 @@
  </security-constraint>
  <login-config>
   <auth-method>BASIC</auth-method>
-  <!-- realm-name>dbRealm</realm-name-->
   <realm-name>ApplicationRealm</realm-name>
  </login-config>
  <security-role>
