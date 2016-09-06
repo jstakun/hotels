@@ -64,6 +64,9 @@
     <get uri="/v1/cache/{cid}/cheapest/nearby/{lat}/{lng}/{distance}/{limit}">
       <to uri="direct:getCheapestNearbyFromCache"/>
     </get>
+    <get uri="/v1/cache/{cid}/stars/nearby/{lat}/{lng}/{distance}/{limit}">
+      <to uri="direct:getStarsNearbyFromCache"/>
+    </get>
     <get uri="/v1/cache/{cid}/async/nearby/{lat}/{lng}/{distance}/{limit}">
       <to uri="seda:getNearbyFromCache?waitForTaskToComplete=Never"/>
     </get>
@@ -197,9 +200,21 @@
     <setHeader headerName="CamelMongoDbLimit">
       <simple>${header.limit}</simple>
     </setHeader>
+    <!--setHeader headerName="CamelMongoDbSortBy">
+      <simple>{"properties.minrate" : 1}</simple>
+      "properties.stars"
+    </setHeader-->
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
+  </route>
+  
+  <route id="Get most stars nearby from cache">
+  	<from uri="direct:getStarsNearbyFromCache" />
+  	<setHeader headerName="CamelMongoDbSortBy">
+      <simple>{"properties.stars" : -1}</simple> 
+    </setHeader>
+    <to uri="direct:getNearbyFromCache"/>
   </route>
   
   <route id="Get cheapest nearby from cache">
