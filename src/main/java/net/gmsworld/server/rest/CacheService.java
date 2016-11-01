@@ -174,14 +174,17 @@ public class CacheService {
 		logger.log(Level.INFO, "Saving document to colletion " + collectionId);
 		DBObject dbo = (DBObject)JSON.parse(document);
 		dbo.put("creationDate", new Date());
-		WriteResult wr = collection.insert(dbo);
-		if (wr.getError() != null) {
-			logger.log(Level.SEVERE, "Failed to save document " + wr.getError());
-			return Response.status(500).entity("Failed to save document " + wr.getError()).build();
-		} else {
-			logger.log(Level.INFO, "Document saved");
-			return Response.status(200).entity("Document saved").build();
-		}  
+		try {
+			WriteResult wr = collection.insert(dbo);
+			final String msg = wr.getN() + " documents saved";
+			logger.log(Level.INFO, msg);
+			return Response.status(200).entity(msg).build();
+		}
+		catch (Exception e) {
+			final String msg = "Failed to save document " + e.getMessage();
+			logger.log(Level.SEVERE, msg);
+			return Response.status(500).entity(msg).build();
+		}
 	}
 	
 	@POST
@@ -193,13 +196,16 @@ public class CacheService {
 		DBObject dbo = (DBObject)JSON.parse(document);
 		dbo.put("key", key);
 		dbo.put("creationDate", new Date());
-		WriteResult wr = collection.insert(dbo);
-		if (wr.getError() != null) {
-			logger.log(Level.SEVERE, "Failed to save document " + wr.getError());
-			return Response.status(500).entity("Failed to save document " + wr.getError()).build();
-		} else {
-			logger.log(Level.INFO, "Document saved");
-			return Response.status(200).entity("Document saved").build();
-		}  
+		try {
+			WriteResult wr = collection.insert(dbo);
+			final String msg = wr.getN() + " documents saved";
+			logger.log(Level.INFO, msg);
+			return Response.status(200).entity(msg).build();
+		}
+		catch (Exception e) {
+			final String msg = "Failed to save document " + e.getMessage();
+			logger.log(Level.SEVERE, msg);
+			return Response.status(500).entity(msg).build();
+		}
 	}	
 }

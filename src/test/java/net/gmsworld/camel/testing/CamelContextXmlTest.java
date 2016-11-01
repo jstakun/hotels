@@ -1,7 +1,5 @@
 package net.gmsworld.camel.testing;
 
-import static org.junit.Assert.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +11,6 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
 
 public class CamelContextXmlTest extends CamelSpringTestSupport {
 

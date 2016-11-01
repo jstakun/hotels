@@ -1,5 +1,7 @@
 package net.gmsworld.server.mongo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import javax.annotation.PostConstruct;
@@ -7,9 +9,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
 import com.mongodb.DB;
-import com.mongodb.Mongo;
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoURI;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import com.sun.istack.logging.Logger;
 
 @Named
@@ -33,17 +35,18 @@ public class DBConnection {
 
 		//Connection URL: mongodb://$OPENSHIFT_MONGODB_DB_HOST:$OPENSHIFT_MONGODB_DB_PORT/
 		
-		//String mongoHost = System.getenv("OPENSHIFT_MONGODB_DB_HOST");
-		//String mongoPort = System.getenv("OPENSHIFT_MONGODB_DB_PORT");
-		String mongoUser = System.getenv("OPENSHIFT_MONGODB_DB_USERNAME");
-		String mongoPassword = System.getenv("OPENSHIFT_MONGODB_DB_PASSWORD");
-		String mongoDBName = "cache";
-		String mongoUrl = System.getenv("OPENSHIFT_MONGODB_DB_URL");
-		//int port = Integer.decode(mongoPort);
+		final String mongoHost = System.getenv("OPENSHIFT_MONGODB_DB_HOST");
+		final String mongoPort = System.getenv("OPENSHIFT_MONGODB_DB_PORT");
+		final String mongoUser = System.getenv("OPENSHIFT_MONGODB_DB_USERNAME");
+		final String mongoPassword = System.getenv("OPENSHIFT_MONGODB_DB_PASSWORD");
+		final String mongoDBName = "cache";
+		//final String mongoUrl = System.getenv("OPENSHIFT_MONGODB_DB_URL");
+		final int port = Integer.decode(mongoPort);
 		
-		Mongo mongo = null;
+		//use MongoClient
+		/*Mongo mongo = null;
 		try {
-			mongo = new Mongo(new MongoURI(mongoUrl)); //new Mongo(mongoHost, port);
+			mongo = new Mongo(new MongoURI(mongoUrl)); 
 			logger.log(Level.INFO, "Connected to database");
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Couldn't connect to MongoDB: " + e.getMessage(), e);
@@ -52,11 +55,20 @@ public class DBConnection {
 		mongoDB = mongo.getDB(mongoDBName);
 
 		if (mongoDB.authenticate(mongoUser, mongoPassword.toCharArray()) == false) {
-			System.out.println("Failed to authenticate DB ");
+			logger.log(Level.INFO, "Failed to authenticate DB ");
+		}*/
+		
+		List<MongoCredential> credentialsList = new ArrayList<MongoCredential>(1);
+		credentialsList.add(MongoCredential.createCredential(mongoUser, mongoDBName, mongoPassword.toCharArray()));
+		
+		try {
+			MongoClient client = new MongoClient(new ServerAddress(mongoHost, port), credentialsList);
+			mongoDB = client.getDB(mongoDBName);
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Couldn't connect to MongoDB: " + e.getMessage(), e);
 		}
-
-		this.initDatabase(mongoDB);
-
+		
+		initDatabase(mongoDB);
 	}
 
 	public DB getDB() {

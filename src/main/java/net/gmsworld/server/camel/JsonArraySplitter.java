@@ -25,7 +25,7 @@ public class JsonArraySplitter {
         String msg = message.getBody(String.class);
         
         JSONObject root = new JSONObject(msg);         
-        //read first value as array
+        //find first array
         
         JSONArray jsonArray = null;
         String key = null;

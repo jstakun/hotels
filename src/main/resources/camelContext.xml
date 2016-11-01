@@ -40,6 +40,7 @@
   <restConfiguration component="servlet" contextPath="/camel" bindingMode="auto"/>
   
   <rest>
+    
     <get uri="/v1/cache/{cid}">
       <to uri="direct:getFromCacheUnlimited"/>
     </get>
@@ -79,16 +80,21 @@
     <get uri="/v1/count/{cid}/nearby/{lat}/{lng}/{distance}">
       <to uri="direct:getNearbyFromCacheCount"/>
     </get>
+    
     <post uri="/v1/cache/{cid}">
       <to uri="direct:putToCache"/>
     </post>
     <post uri="/v1/cache/multi/{cid}">
       <to uri="direct:putToCacheMulti"/>
     </post>
+    
     <delete uri="/v1/cache/{cid}/{property}/{value}">
       <to uri="direct:deleteFromCache"/>
     </delete>
+  
   </rest>
+  
+  <!-- insert -->
   
   <route id="Put to cache">
     <from uri="direct:putToCache"/>
@@ -115,6 +121,24 @@
       <simple>{"status" : "ok"}</simple>
     </setBody>
   </route>
+  
+  <!-- delete -->
+  
+  <route id="Delete from cache">
+    <from uri="direct:deleteFromCache"/>
+    <log message="Delete from cache ${header.cid} objects matching ${header.property} : ${header.value}" loggingLevel="INFO"/>
+    <setBody>
+      <simple>{"${header.property}" : "${header.value}"}</simple>
+    </setBody>
+    <recipientList>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=remove</simple>
+    </recipientList>
+    <setBody>
+      <header>CamelMongoDbRecordsAffected</header>
+    </setBody>
+  </route>
+  
+  <!-- select -->
   
   <route id="Get from cache unlimited">
     <from uri="direct:getFromCacheUnlimited"/>
@@ -287,20 +311,6 @@
       <simple>{ "type": "FeatureCollection", "_id" : "${header.lng}_${header.lat}_${header.distance}_${header.limit}", "features" : ${body} }</simple>	
     </setBody>
     <to uri="direct:putToCache"/>
-  </route>
-  
-  <route id="Delete from cache">
-    <from uri="direct:deleteFromCache"/>
-    <log message="Delete from cache ${header.cid} objects matching ${header.property} : ${header.value}" loggingLevel="INFO"/>
-    <setBody>
-      <simple>{"${header.property}" : "${header.value}"}</simple>
-    </setBody>
-    <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=remove</simple>
-    </recipientList>
-    <setBody>
-      <header>CamelMongoDbRecordsAffected</header>
-    </setBody>
   </route>
   
  </camelContext>
