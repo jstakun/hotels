@@ -171,20 +171,10 @@ public class CacheService {
 	public Response insertToCache(@PathParam("lat") String latitude, @PathParam("lng") String longitude, String document) {
 		String collectionId = getCollectionId(latitude, longitude);
 		DBCollection collection = this.getCollection(collectionId, true);
-		logger.log(Level.INFO, "Saving document to colletion " + collectionId);
+		logger.log(Level.INFO, "Saving document to collection " + collectionId);
 		DBObject dbo = (DBObject)JSON.parse(document);
 		dbo.put("creationDate", new Date());
-		try {
-			WriteResult wr = collection.insert(dbo);
-			final String msg = wr.getN() + " documents saved";
-			logger.log(Level.INFO, msg);
-			return Response.status(200).entity(msg).build();
-		}
-		catch (Exception e) {
-			final String msg = "Failed to save document " + e.getMessage();
-			logger.log(Level.SEVERE, msg);
-			return Response.status(500).entity(msg).build();
-		}
+		return insertDBObject(collection, dbo);
 	}
 	
 	@POST
@@ -192,13 +182,17 @@ public class CacheService {
 	@Path("/{key}")
 	public Response insertToCache(@PathParam("key") String key, String document) {
 		DBCollection collection = getCollection(SECOND_LEVEL_CACHE, true);
-		logger.log(Level.INFO, "Saving document to colletion " + SECOND_LEVEL_CACHE);
+		logger.log(Level.INFO, "Saving document to collection " + SECOND_LEVEL_CACHE);
 		DBObject dbo = (DBObject)JSON.parse(document);
 		dbo.put("key", key);
 		dbo.put("creationDate", new Date());
+		return insertDBObject(collection, dbo);
+	}	
+	
+	private Response insertDBObject(DBCollection collection, DBObject dbo) {
 		try {
 			WriteResult wr = collection.insert(dbo);
-			final String msg = wr.getN() + " documents saved";
+			final String msg = "Document saved with id " + wr.getUpsertedId();
 			logger.log(Level.INFO, msg);
 			return Response.status(200).entity(msg).build();
 		}
@@ -206,6 +200,6 @@ public class CacheService {
 			final String msg = "Failed to save document " + e.getMessage();
 			logger.log(Level.SEVERE, msg);
 			return Response.status(500).entity(msg).build();
-		}
-	}	
+		}  
+	}
 }

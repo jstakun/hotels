@@ -43,21 +43,6 @@ public class DBConnection {
 		//final String mongoUrl = System.getenv("OPENSHIFT_MONGODB_DB_URL");
 		final int port = Integer.decode(mongoPort);
 		
-		//use MongoClient
-		/*Mongo mongo = null;
-		try {
-			mongo = new Mongo(new MongoURI(mongoUrl)); 
-			logger.log(Level.INFO, "Connected to database");
-		} catch (Exception e) {
-			logger.log(Level.SEVERE, "Couldn't connect to MongoDB: " + e.getMessage(), e);
-		}
-
-		mongoDB = mongo.getDB(mongoDBName);
-
-		if (mongoDB.authenticate(mongoUser, mongoPassword.toCharArray()) == false) {
-			logger.log(Level.INFO, "Failed to authenticate DB ");
-		}*/
-		
 		List<MongoCredential> credentialsList = new ArrayList<MongoCredential>(1);
 		credentialsList.add(MongoCredential.createCredential(mongoUser, mongoDBName, mongoPassword.toCharArray()));
 		
