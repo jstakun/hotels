@@ -250,7 +250,7 @@
       <simple>cache</simple>
     </setHeader>
     <setBody>
-      <simple>{ "type": "FeatureCollection", "_id" : "${header.lng}_${header.lat}_${header.distance}_${header.limit}_stars", "features" : ${body} }</simple>	
+      <simple>{ "type": "FeatureCollection", "properties": { "creationDate": ${bean:java.lang.System?method=currentTimeMillis} }, "_id" : "${header.lng}_${header.lat}_${header.distance}_${header.limit}_stars", "features" : ${body} }</simple>	
     </setBody>
     <to uri="direct:putToCache"/>
   </route>
@@ -285,7 +285,7 @@
       <simple>cache</simple>
     </setHeader>
     <setBody>
-      <simple>{ "type": "FeatureCollection", "_id" : "${header.lng}_${header.lat}_${header.distance}_${header.limit}_cheapest", "features" : ${body} }</simple>	
+      <simple>{ "type": "FeatureCollection", "properties": { "creationDate": ${bean:java.lang.System?method=currentTimeMillis} }, "_id" : "${header.lng}_${header.lat}_${header.distance}_${header.limit}_cheapest", "features" : ${body} }</simple>	
     </setBody>
     <to uri="direct:putToCache"/>
   </route>
@@ -308,7 +308,7 @@
       <simple>cache</simple>
     </setHeader>
     <setBody>
-      <simple>{ "type": "FeatureCollection", "_id" : "${header.lng}_${header.lat}_${header.distance}_${header.limit}", "features" : ${body} }</simple>	
+      <simple>{ "type": "FeatureCollection", "properties": { "creationDate": ${bean:java.lang.System?method=currentTimeMillis} }, "_id" : "${header.lng}_${header.lat}_${header.distance}_${header.limit}", "features" : ${body} }</simple>	
     </setBody>
     <to uri="direct:putToCache"/>
   </route>
