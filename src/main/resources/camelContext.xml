@@ -54,6 +54,9 @@
       <to uri="direct:getByQueryFromCacheUnlimited"/>
     </get>
     <get uri="/v1/one/{cid}/{property}/{value}">
+      <to uri="direct:getByPropertyFromCache"/>
+    </get>
+    <get uri="/v1/getById/{cid}/{value}">
       <to uri="direct:getByIdFromCache"/>
     </get>
     <get uri="/v1/cache/{cid}/{property}/{value}/{limit}">
@@ -205,13 +208,24 @@
   </route>
   
   <route id="Get one by property from cache">
-    <from uri="direct:getByIdFromCache"/>
+    <from uri="direct:getByPropertyFromCache"/>
     <log message="Get from cache ${header.cid} object matching ${header.property} : ${header.value} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setBody>
       <simple>{"${header.property}" : "${header.value}"}</simple>
     </setBody>
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findOneByQuery</simple>
+    </recipientList>
+  </route>
+  
+  <route id="Get one by id from cache">
+    <from uri="direct:getByIdFromCache"/>
+    <log message="Get from cache ${header.cid} object with id : ${header.value} by user ${header.authorization}" loggingLevel="INFO"/>
+    <setBody>
+      <simple>"${header.value}"</simple>
+    </setBody>
+    <recipientList>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findOneById</simple>
     </recipientList>
   </route>
   

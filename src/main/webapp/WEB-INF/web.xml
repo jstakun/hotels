@@ -1,100 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app metadata-complete="false" version="3.0"
- xmlns="http://java.sun.com/xml/ns/javaee"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
- <context-param>
-  <param-name>contextConfigLocation</param-name>
-  <param-value>classpath:camelContext.xml</param-value>
- </context-param>
- <listener>
-  <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
- </listener>
- <!-- filter>
-  <filter-name>RestSwaggerCorsFilter</filter-name>
-  <filter-class>org.apache.camel.component.swagger.RestSwaggerCorsFilter</filter-class>
-</filter-->
- <servlet>
-  <servlet-name>CamelServlet</servlet-name>
-  <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
-  <load-on-startup>1</load-on-startup>
- </servlet>
- <servlet>
-   <servlet-name>ApiDeclarationServlet</servlet-name>
-   <servlet-class>org.apache.camel.component.swagger.DefaultCamelSwaggerServlet</servlet-class>
-   <init-param>
-    <param-name>base.path</param-name>
-    <param-value>camel</param-value>
-  </init-param>
-  <init-param>
-    <param-name>api.path</param-name>
-    <param-value>api-docs</param-value>
-  </init-param>
-  <init-param>
-    <param-name>api.version</param-name>
-    <param-value>1.0.0</param-value>
-  </init-param>
-  <init-param>
-    <param-name>api.title</param-name>
-    <param-value>Hotels database services</param-value>
-  </init-param>
-  <init-param>
-    <param-name>api.description</param-name>
-    <param-value>Services for manipulating hotels booking database</param-value>
-  </init-param>
-  <load-on-startup>2</load-on-startup>
- </servlet>
- <!-- filter-mapping>
-  <filter-name>RestSwaggerCorsFilter</filter-name>
-  <url-pattern>/api-docs/*</url-pattern>
-  <url-pattern>/camel/*</url-pattern>
-</filter-mapping-->
- <servlet-mapping>
-  <servlet-name>CamelServlet</servlet-name>
-  <url-pattern>/camel/*</url-pattern>
- </servlet-mapping>
- <servlet-mapping>
-  <servlet-name>ApiDeclarationServlet</servlet-name>
-  <url-pattern>/api-docs/*</url-pattern>
-</servlet-mapping>
- <!-- comment for local testing -->
- <servlet-mapping>
-  <servlet-name>javax.ws.rs.core.Application</servlet-name>
-  <url-pattern>/rest/*</url-pattern>
- </servlet-mapping>
- <security-constraint>
-  <display-name>Reader Area</display-name>
-  <web-resource-collection>
-   <web-resource-name>Camel Rest Endpoint</web-resource-name>
-   <url-pattern>/camel/*</url-pattern>
-   <http-method>GET</http-method>
-  </web-resource-collection>
-  <auth-constraint>
-   <role-name>reader</role-name>
-  </auth-constraint>
- </security-constraint>
- <security-constraint>
-  <display-name>Protected Area</display-name>
-  <web-resource-collection>
-   <web-resource-name>Rest Services Area</web-resource-name>
-   <url-pattern>/rest/*</url-pattern>
-  </web-resource-collection>
-  <web-resource-collection>
-   <web-resource-name>Camel Rest Endpoints</web-resource-name>
-   <url-pattern>/camel/*</url-pattern>
-   <http-method-omission>GET</http-method-omission>
-  </web-resource-collection>
-  <auth-constraint>
-   <role-name>admin</role-name>
-  </auth-constraint>
- </security-constraint>
- <login-config>
-  <auth-method>BASIC</auth-method>
-  <realm-name>ApplicationRealm</realm-name>
- </login-config>
- <security-role>
-  <role-name>admin</role-name>
- </security-role>
- <security-role>
-  <role-name>reader</role-name>
- </security-role>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" metadata-complete="false" version="3.0">
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:camelContext.xml</param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>ApiDeclarationServlet</servlet-name>
+    <servlet-class>org.apache.camel.component.swagger.DefaultCamelSwaggerServlet</servlet-class>
+    <init-param>
+      <param-name>base.path</param-name>
+      <param-value>camel</param-value>
+    </init-param>
+    <init-param>
+      <param-name>api.path</param-name>
+      <param-value>api-docs</param-value>
+    </init-param>
+    <init-param>
+      <param-name>api.version</param-name>
+      <param-value>1.0.0</param-value>
+    </init-param>
+    <init-param>
+      <param-name>api.title</param-name>
+      <param-value>Hotels database services</param-value>
+    </init-param>
+    <init-param>
+      <param-name>api.description</param-name>
+      <param-value>Services for manipulating hotels booking database</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CamelServlet</servlet-name>
+    <url-pattern>/camel/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ApiDeclarationServlet</servlet-name>
+    <url-pattern>/api-docs/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>javax.ws.rs.core.Application</servlet-name>
+    <url-pattern>/rest/*</url-pattern>
+  </servlet-mapping>
+  <security-constraint>
+    <display-name>Reader Area</display-name>
+    <web-resource-collection>
+      <web-resource-name>Camel Rest Endpoint</web-resource-name>
+      <url-pattern>/camel/*</url-pattern>
+      <http-method>GET</http-method>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>reader</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <security-constraint>
+    <display-name>Protected Area</display-name>
+    <web-resource-collection>
+      <web-resource-name>Rest Services Area</web-resource-name>
+      <url-pattern>/rest/*</url-pattern>
+    </web-resource-collection>
+    <web-resource-collection>
+      <web-resource-name>Camel Rest Endpoints</web-resource-name>
+      <url-pattern>/camel/*</url-pattern>
+      <http-method-omission>GET</http-method-omission>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>ApplicationRealm</realm-name>
+  </login-config>
+  <security-role>
+    <role-name>admin</role-name>
+  </security-role>
+  <security-role>
+    <role-name>reader</role-name>
+  </security-role>
 </web-app>
