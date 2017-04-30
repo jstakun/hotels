@@ -213,9 +213,7 @@
     <setBody>
       <simple>{"${header.property}" : "${header.value}"}</simple>
     </setBody>
-    <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findOneByQuery</simple>
-    </recipientList>
+    <toD uri="mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findOneByQuery"/>
   </route>
   
   <route id="Get one by id from cache">
@@ -224,9 +222,7 @@
     <setBody>
       <simple>"${header.value}"</simple>
     </setBody>
-    <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findById</simple>
-    </recipientList>
+    <toD uri="mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findById"/>
   </route>
   
   <route id="Get nearby from cache">
