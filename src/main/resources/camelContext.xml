@@ -225,7 +225,7 @@
       <simple>"${header.value}"</simple>
     </setBody>
     <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findOneById</simple>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findById</simple>
     </recipientList>
   </route>
   
