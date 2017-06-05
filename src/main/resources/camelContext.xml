@@ -47,6 +47,9 @@
     <get uri="/v1/cache/{cid}/{limit}">
       <to uri="direct:getFromCache"/>
     </get>
+    <get uri="/v1/cache/{cid}/{sortBy}/{sortOrder}/{limit}">
+      <to uri="direct:getFromCacheSorted"/>
+    </get>
     <get uri="/v1/count/{cid}">
       <to uri="direct:getFromCacheCount"/>
     </get>
@@ -158,7 +161,29 @@
     </validate>
     <log message="Get all from cache ${header.cid} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
+      <!--  descending by _id -->
       <simple>{"_id" : -1}</simple>
+    </setHeader>
+    <setHeader headerName="CamelMongoDbLimit">
+      <simple>${header.limit}</simple>
+    </setHeader>
+    <setHeader headerName="CamelMongoDbBatchSize">
+      <constant>{{batchLimit}}</constant>
+    </setHeader>
+    <recipientList>
+      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+    </recipientList>
+  </route>
+  
+  <route id="Get from cache sorted">
+    <from uri="direct:getFromCacheSorted"/>
+    <validate>
+      <simple>${header.limit} range '1..{{batchLimit}}'</simple>
+    </validate>
+    <log message="Get all from cache ${header.cid} with limit ${header.limit} sorted by ${header.sortBy} ${header.sortOrder}  by user ${header.authorization}" loggingLevel="INFO"/>
+    <setHeader headerName="CamelMongoDbSortBy">
+      <!--  descending by _id -->
+      <simple>{"${header.attr}" : ${header.sortOrder}}</simple>
     </setHeader>
     <setHeader headerName="CamelMongoDbLimit">
       <simple>${header.limit}</simple>
