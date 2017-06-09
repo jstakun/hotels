@@ -182,8 +182,7 @@
     </validate>
     <log message="Get all from cache ${header.cid} with limit ${header.limit} sorted by ${header.sortBy} ${header.sortOrder}  by user ${header.authorization}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
-      <!--  descending by _id -->
-      <simple>{"${header.attr}" : ${header.sortOrder}}</simple>
+      <simple>{"${header.sortBy}" : ${header.sortOrder}}</simple>
     </setHeader>
     <setHeader headerName="CamelMongoDbLimit">
       <simple>${header.limit}</simple>
