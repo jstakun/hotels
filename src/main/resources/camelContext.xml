@@ -161,8 +161,8 @@
     </validate>
     <log message="Get all from cache ${header.cid} with limit ${header.limit} by user ${header.authorization}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
-      <!--  descending by _id -->
-      <simple>{"_id" : -1}</simple>
+      <!--  descending by documentTimestamp -->
+      <constant>{"documentTimestamp" : -1}</constant>
     </setHeader>
     <setHeader headerName="CamelMongoDbLimit">
       <simple>${header.limit}</simple>
@@ -182,7 +182,7 @@
     </validate>
     <log message="Get all from cache ${header.cid} with limit ${header.limit} sorted by ${header.sortBy}: ${header.sortOrder}  by user ${header.authorization}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
-      <simple>{"${header.sortBy}" : ${header.sortOrder}}</simple>
+      <simple>{\"${header.sortBy}\" : ${header.sortOrder}}</simple>
     </setHeader>
     <setHeader headerName="CamelMongoDbLimit">
       <simple>${header.limit}</simple>
