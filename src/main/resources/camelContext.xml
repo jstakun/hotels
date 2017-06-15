@@ -190,10 +190,6 @@
     <setHeader headerName="CamelMongoDbBatchSize">
       <constant>{{batchLimit}}</constant>
     </setHeader>
-    <setHeader headerName="CamelMongoDbNumToSkip">
-      <constant>0</constant>
-    </setHeader>
-    <log message="Headers CamelMongoDbSortBy: ${header.CamelMongoDbSortBy}, CamelMongoDbLimit: ${header.CamelMongoDbLimit}, CamelMongoDbBatchSize: ${header.CamelMongoDbBatchSize}, CamelMongoDbNumToSkip: ${CamelMongoDbNumToSkip}"  loggingLevel="INFO"/>
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
