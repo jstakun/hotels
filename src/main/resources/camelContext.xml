@@ -237,6 +237,7 @@
     <setBody>
       <simple>{"${header.property}" : "${header.value}"}</simple>
     </setBody>
+    <convertBodyTo type="com.mongodb.DBObject"/>
     <recipientList>
         <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findOneByQuery</simple>
      </recipientList>
