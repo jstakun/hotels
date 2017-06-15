@@ -180,7 +180,7 @@
     <validate>
       <simple>${header.limit} range '1..{{batchLimit}}'</simple>
     </validate>
-    <log message="Get all from cache ${header.cid} with limit ${header.limit} sorted by ${header.sortBy} ${header.sortOrder}  by user ${header.authorization}" loggingLevel="INFO"/>
+    <log message="Get all from cache ${header.cid} with limit ${header.limit} sorted by ${header.sortBy}: ${header.sortOrder}  by user ${header.authorization}" loggingLevel="INFO"/>
     <setHeader headerName="CamelMongoDbSortBy">
       <simple>{"${header.sortBy}" : ${header.sortOrder}}</simple>
     </setHeader>
@@ -190,6 +190,7 @@
     <setHeader headerName="CamelMongoDbBatchSize">
       <constant>{{batchLimit}}</constant>
     </setHeader>
+    <log message="Headers CamelMongoDbSortBy: ${header.CamelMongoDbSortBy}, CamelMongoDbLimit: ${header.CamelMongoDbLimit}, CamelMongoDbBatchSize: ${header.CamelMongoDbBatchSize}"  loggingLevel="INFO"/>
     <recipientList>
       <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
