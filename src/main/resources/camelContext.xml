@@ -106,7 +106,7 @@
     <from uri="direct:putToCache"/>
     <log message="Putting to cache ${header.cid} document..." loggingLevel="INFO"/>
     <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=save</simple>
+      <simple>mongodb:cloudDb?database=${sysenv.MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=save</simple>
     </recipientList>
     <setBody>
       <header>CamelMongoOid</header>
@@ -137,7 +137,7 @@
       <simple>{"${header.property}" : "${header.value}"}</simple>
     </setBody>
     <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=remove</simple>
+      <simple>mongodb:cloudDb?database=${sysenv.MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=remove</simple>
     </recipientList>
     <setBody>
       <header>CamelMongoDbRecordsAffected</header>
@@ -171,7 +171,7 @@
       <constant>{{batchLimit}}</constant>
     </setHeader>
     <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+      <simple>mongodb:cloudDb?database=${sysenv.MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
   </route>
   
@@ -191,7 +191,7 @@
       <constant>{{batchLimit}}</constant>
     </setHeader>
     <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+      <simple>mongodb:cloudDb?database=${sysenv.MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
   </route>
   
@@ -199,7 +199,7 @@
     <from uri="direct:getFromCacheCount"/>
     <log message="Get count from cache ${header.cid} by user ${header.authorization}" loggingLevel="INFO"/>
     <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=count</simple>
+      <simple>mongodb:cloudDb?database=${sysenv.MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=count</simple>
     </recipientList>
   </route>
   
@@ -227,7 +227,7 @@
       <simple>${header.limit}</simple>
     </setHeader>
     <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+      <simple>mongodb:cloudDb?database=${sysenv.MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
   </route>
   
@@ -239,7 +239,7 @@
     </setBody>
     <convertBodyTo type="com.mongodb.DBObject"/>
     <recipientList>
-        <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findOneByQuery</simple>
+        <simple>mongodb:cloudDb?database=${sysenv.MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findOneByQuery</simple>
      </recipientList>
   </route>
   
@@ -249,7 +249,7 @@
     <setBody>
       <simple>"${header.value}"</simple>
     </setBody>
-    <toD uri="mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findById"/>
+    <toD uri="mongodb:cloudDb?database=${sysenv.MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findById"/>
   </route>
   
   <route id="Get nearby from cache">
@@ -268,7 +268,7 @@
       <simple>${header.limit}</simple>
     </setHeader>
     <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+      <simple>mongodb:cloudDb?database=${sysenv.MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
   </route>
   
@@ -311,7 +311,7 @@
       <simple>{"properties.minrate" : 1}</simple>
     </setHeader>
     <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
+      <simple>mongodb:cloudDb?database=${sysenv.MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=findAll</simple>
     </recipientList>
   </route>
   
@@ -334,7 +334,7 @@
       <simple>{ "geometry" : { $near : { $geometry : { type : "Point" , coordinates : [ ${header.lng} , ${header.lat} ] } , $maxDistance : ${header.distance} } } }</simple>
     </setBody>
     <recipientList>
-      <simple>mongodb:cloudDb?database=${sysenv.OPENSHIFT_MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=count</simple>
+      <simple>mongodb:cloudDb?database=${sysenv.MONGODB_DATABASE}&amp;collection=${header.cid}&amp;operation=count</simple>
     </recipientList>
   </route>
   
