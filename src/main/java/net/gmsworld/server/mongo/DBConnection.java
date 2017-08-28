@@ -28,19 +28,11 @@ public class DBConnection {
 
 	@PostConstruct
 	public void afterCreate() {
-		
-		//Root User:     OPENSHIFT_MONGODB_DB_USERNAME
-		//Root Password: OPENSHIFT_MONGODB_DB_PASSWORD
-		//Database Name: cache
-
-		//Connection URL: mongodb://$OPENSHIFT_MONGODB_DB_HOST:$OPENSHIFT_MONGODB_DB_PORT/
-		
-		final String mongoHost = System.getenv("OPENSHIFT_MONGODB_DB_HOST");
-		final String mongoPort = System.getenv("OPENSHIFT_MONGODB_DB_PORT");
-		final String mongoUser = System.getenv("OPENSHIFT_MONGODB_DB_USERNAME");
-		final String mongoPassword = System.getenv("OPENSHIFT_MONGODB_DB_PASSWORD");
-		final String mongoDBName = "cache";
-		//final String mongoUrl = System.getenv("OPENSHIFT_MONGODB_DB_URL");
+		final String mongoHost = System.getenv("MONGODB_SERVICE_HOST");
+		final String mongoPort = System.getenv("MONGODB_SERVICE_PORT");
+		final String mongoUser = System.getenv("MONGODB_USER");
+		final String mongoPassword = System.getenv("MONGODB_PASSWORD");
+		final String mongoDBName = System.getenv("MONGODB_DATABASE");
 		final int port = Integer.decode(mongoPort);
 		
 		List<MongoCredential> credentialsList = new ArrayList<MongoCredential>(1);
