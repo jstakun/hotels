@@ -8,7 +8,7 @@
   <packaging>war</packaging>
   <name>hotels</name>
   <properties>
-    <camel.version>2.17.7</camel.version>
+    <camel.version>2.24.0</camel.version>
     <spring.version>3.2.13.RELEASE</spring.version>
     <maven.compiler.source>1.7</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
